@@ -426,7 +426,16 @@ section{
     text-align: justify;
 }
 
-.about .about-content .right a{
+.about .about-content .right #linkedin{
+    color: crimson;
+}
+
+.about .about-content .right #linkedin:hover{
+    color: crimson;
+    font-weight: 500;
+}
+
+.about .about-content .right #download-cv{
     display: inline-block;
     background: crimson;
     color: #fff;
