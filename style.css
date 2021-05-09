@@ -659,13 +659,17 @@ section{
     
     .skills .skills-content .left p{
         font-size: 14px;
-        margin-left: 35px;
+        margin-left: 60px;
+    }
 
+    .skills .skills-content .right{
+        margin-left: 50px;
     }
     
     .skills .skills-content .left #read-skills{
         margin-left: 150px;
     }
+
     
 }
 
