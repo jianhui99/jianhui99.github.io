@@ -141,7 +141,7 @@ section{
     height: 100vh;
 }
 
-.about .title, .services .title, .skills .title{
+.about .title, .services .title, .skills .title, .contact .title{
     position: relative;
     text-align: center;
     font-size: 40px;
@@ -151,7 +151,7 @@ section{
     font-family: 'Ubuntu', sans-serif;
 }
 
-.about .title::before, .services .title::before, .skills .title::before{
+.about .title::before, .services .title::before, .skills .title::before, .contact .title::before{
     content: "";
     position: absolute;
     bottom: 0px;
@@ -186,7 +186,7 @@ section{
     transform: translateX(-50%);
 }
 
-.about .about-content, .services .services-content, .skills .skills-content{
+.about .about-content, .services .services-content, .skills .skills-content, .contact .contact-content{
     margin-left: -65px;
     display: flex;
     align-items: center;
@@ -408,32 +408,135 @@ section{
     width: 50%;
 }
 
+/* contact styling */
+
+.contact .title::after{
+    content: "Get in touch";
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    font-size: 20px;
+    color: crimson;
+    padding: 5px;
+    background: #fff;
+    transform: translateX(-50%);
+}
 
 
+.contact{
+    font-family: 'Poppins', sans-serif;
+}
 
+.contact .contact-content .column{
+    width: calc(50% - 30px);
+}
 
+.contact .contact-content .left .text{
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
 
+.contact .contact-content .left{
+    text-align: justify;
+}
 
+.contact .contact-content .left .icons{
+    margin: 10px 0;
+}
 
+.contact .contact-content .row{
+    display: flex;
+    height: 65px;
+    align-items: center;
+}
 
+.contact .contact-content .row .info{
+    margin-left: 30px;
+}
 
+.contact .contact-content .row i{
+    font-size: 25px;
+    color: crimson;
+}
 
+.contact .contact-content .info .head{
+    font-weight: 500;
+}
 
+.contact .contact-content .info .sub-title{
+    color: #333;
+}
 
+.contact .right form .fields{
+    display: flex;
+}
 
+.contact .right form .field,
+.contact .right form .fields .field{
+    height: 45px;
+    width: 100%;
+    margin-bottom: 15px;
+}
 
+.contact .right form .textarea{
+    height: 80px;
+    width: 100%;
+}
 
+.contact .right form .name{
+    margin-right: 10px;
+}
 
+.contact .right form .email{
+    margin-right: 10px;
+}
 
+.contact .right form .field input,
+.contact .right form .textarea textarea{
+    height: 100%;
+    width: 100%;
+    border: 1px solid lightgrey;
+    border-radius: 6px;
+    outline: none;
+    padding: 0 15px;
+    font-size: 17px;
+    font-family: 'Poppins',sans-serif;
+}
 
+.contact .right form .textarea textarea{
+    padding-top: 10px;
+    resize: none;
+}
 
+.contact .right form .button{
+    height: 47px;
+    width: 170px;
+}
 
+.contact .right form .button button{
+    width: 100%;
+    height: 100%;
+    border: 2px solid crimson;
+    background: crimson;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
+.contact .right form .button button:hover{
+    color: crimson;
+    background: none;
+}
 
-
-
-
-
+.contact .contact-content .right .text{
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 35px;
+}
 
 
 /* responsive media query start */
@@ -649,6 +752,10 @@ section{
         width: 100%;
     }
 
+    .contact .contact-content .column{
+        width: 100%;
+        margin-left: 65px;
+    }
 
     .skills .skills-content .left .text{
         font-size: 18px;
