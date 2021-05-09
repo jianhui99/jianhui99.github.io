@@ -305,7 +305,7 @@
         text-align: justify;
     }
 
-    .about .max-width .about-content .right a{
+    .about .max-width .about-content .right #download-cv{
         margin-left: 150px;
     }
 }
@@ -334,7 +334,7 @@
         margin-left: 65px;
     }
 
-    .about .max-width .about-content .right a{
+    .about .max-width .about-content .right #download-cv{
         margin-left: 125px;
     }
 
@@ -448,7 +448,7 @@ section{
     transition: all 0.3s ease;
 }
 
-.about .about-content .right a:hover{
+.about .about-content .right #download-cv:hover{
     color: crimson;
     background: none;    
 }
