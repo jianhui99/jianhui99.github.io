@@ -207,8 +207,8 @@
         display: block;
         z-index: 999;
     }  
-    .menu-btn i.active:before{
-        content: "\f00d";
+    .menu-btn img.active:before{
+        display: none;
     }
     .navbar .logo a{
         margin-left: -5px;
@@ -427,11 +427,11 @@ section{
 }
 
 .about .about-content .right #linkedin{
-    color: crimson;
+    color: #111;
 }
 
 .about .about-content .right #linkedin:hover{
-    color: crimson;
+    color: #111;
     font-weight: 500;
 }
 

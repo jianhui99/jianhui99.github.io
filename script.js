@@ -7,8 +7,17 @@ $(document).ready(function() {
         }
     });
     // toggle menu/navbar script
-    $('.menu-btn').click(function() {
+    $('.menu-btn #burger').click(function() {
         $('.navbar .menu').toggleClass("active");
-        $('.menu-btn i').toggleClass("active");
+        $('.menu-btn img').toggleClass("active");
+        $('.menu-btn #burger').css("display", "none");
+        $('.menu-btn #close').css("display", "block");
+    }); 
+
+    $('.menu-btn #close').click(function() {
+        $('.navbar .menu').toggleClass("active");
+        $('.menu-btn img').toggleClass("active");
+        $('.menu-btn #burger').css("display", "block");
+        $('.menu-btn #close').css("display", "none");
     }); 
 });
