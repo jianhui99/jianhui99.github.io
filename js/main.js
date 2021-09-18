@@ -1,117 +1,87 @@
-(function ($) {
-	"use strict";
-	var nav = $('nav');
-  var navHeight = nav.outerHeight();
+jQuery(document).ready(function($) {
+
+	'use strict';
+
+        $(window).load(function() { // makes sure the whole site is loaded
+            $(".seq-preloader").fadeOut(); // will first fade out the loading animation
+            $(".sequence").delay(500).fadeOut("slow"); // will fade out the white DIV that covers the website.
+        })
+      
+        
+        $(function() {
   
-  $('.navbar-toggler').on('click', function() {
-    if( ! $('#mainNav').hasClass('navbar-reduce')) {
-      $('#mainNav').addClass('navbar-reduce');
-    }
-  })
+        function showSlide(n) {
+            // n is relative position from current slide
+          
+            // unbind event listener to prevent retriggering
+            $body.unbind("mousewheel");
+          
+            // increment slide number by n and keep within boundaries
+            currSlide = Math.min(Math.max(0, currSlide + n), $slide.length-1);
+            
+            var displacment = window.innerWidth*currSlide;
+            // translate slides div across to appropriate slide
+            $slides.css('transform', 'translateX(-' + displacment + 'px)');
+            // delay before rebinding event to prevent retriggering
+            setTimeout(bind, 700);
+            
+            // change active class on link
+            $('nav a.active').removeClass('active');
+            $($('a')[currSlide]).addClass('active');
+            
+        }
+      
+        function bind() {
+             $body.bind('false', mouseEvent);
+          }
+      
+        function mouseEvent(e, delta) {
+            // On down scroll, show next slide otherwise show prev slide
+            showSlide(delta >= 0 ? -1 : 1);
+            e.preventDefault();
+        }
+        
+        $('nav a, .main-btn a').click(function(e) {
+            // When link clicked, find slide it points to
+            var newslide = parseInt($(this).attr('href')[1]);
+            // find how far it is from current slide
+            var diff = newslide - currSlide - 1;
+            showSlide(diff); // show that slide
+            e.preventDefault();
+        });
+      
+        $(window).resize(function(){
+          // Keep current slide to left of window on resize
+          var displacment = window.innerWidth*currSlide;
+          $slides.css('transform', 'translateX(-'+displacment+'px)');
+        });
+        
+        // cache
+        var $body = $('body');
+        var currSlide = 0;
+        var $slides = $('.slides');
+        var $slide = $('.slide');
+      
+        // give active class to first link
+        $($('nav a')[0]).addClass('active');
+        
+        // add event listener for mousescroll
+        $body.bind('false', mouseEvent);
+    })        
 
-  // Preloader
-  $(window).on('load', function () {
-    if ($('#preloader').length) {
-      $('#preloader').delay(100).fadeOut('slow', function () {
-        $(this).remove();
-      });
-    }
-  });
 
-  // Back to top button
-  $(window).scroll(function() {
-    if ($(this).scrollTop() > 100) {
-      $('.back-to-top').fadeIn('slow');
-    } else {
-      $('.back-to-top').fadeOut('slow');
-    }
-  });
-  $('.back-to-top').click(function(){
-    $('html, body').animate({scrollTop : 0},1500, 'easeInOutExpo');
-    return false;
-  });
+        $('#form-submit .date').datepicker({
+        });
 
-	/*--/ Star ScrollTop /--*/
-	$('.scrolltop-mf').on("click", function () {
-		$('html, body').animate({
-			scrollTop: 0
-		}, 1000);
-	});
 
-	/*--/ Star Counter /--*/
-	$('.counter').counterUp({
-		delay: 15,
-		time: 2000
-	});
+        $(window).on("scroll", function() {
+            if($(window).scrollTop() > 100) {
+                $(".header").addClass("active");
+            } else {
+                //remove the background property so it comes transparent again (defined in your css)
+               $(".header").removeClass("active");
+            }
+        });
 
-	/*--/ Star Scrolling nav /--*/
-	$('a.js-scroll[href*="#"]:not([href="#"])').on("click", function () {
-		if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
-			var target = $(this.hash);
-			target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-			if (target.length) {
-				$('html, body').animate({
-					scrollTop: (target.offset().top - navHeight + 5)
-				}, 1000, "easeInOutExpo");
-				return false;
-			}
-		}
-	});
 
-	// Closes responsive menu when a scroll trigger link is clicked
-	$('.js-scroll').on("click", function () {
-		$('.navbar-collapse').collapse('hide');
-	});
-
-	// Activate scrollspy to add active class to navbar items on scroll
-	$('body').scrollspy({
-		target: '#mainNav',
-		offset: navHeight
-	});
-	/*--/ End Scrolling nav /--*/
-
-	/*--/ Navbar Menu Reduce /--*/
-	$(window).trigger('scroll');
-	$(window).on('scroll', function () {
-		var pixels = 50; 
-		var top = 1200;
-		if ($(window).scrollTop() > pixels) {
-			$('.navbar-expand-md').addClass('navbar-reduce');
-			$('.navbar-expand-md').removeClass('navbar-trans');
-		} else {
-			$('.navbar-expand-md').addClass('navbar-trans');
-			$('.navbar-expand-md').removeClass('navbar-reduce');
-		}
-		if ($(window).scrollTop() > top) {
-			$('.scrolltop-mf').fadeIn(1000, "easeInOutExpo");
-		} else {
-			$('.scrolltop-mf').fadeOut(1000, "easeInOutExpo");
-		}
-	});
-
-	/*--/ Star Typed /--*/
-	if ($('.text-slider').length == 1) {
-    var typed_strings = $('.text-slider-items').text();
-		var typed = new Typed('.text-slider', {
-			strings: typed_strings.split(','),
-			typeSpeed: 80,
-			loop: true,
-			backDelay: 1100,
-			backSpeed: 30
-		});
-	}
-
-	/*--/ Testimonials owl /--*/
-	$('#testimonial-mf').owlCarousel({
-		margin: 20,
-		autoplay: true,
-		autoplayTimeout: 4000,
-		autoplayHoverPause: true,
-		responsive: {
-			0: {
-				items: 1,
-			}
-		}
-	});
-
-})(jQuery);
+});
