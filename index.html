@@ -1,370 +1,808 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Jian Hui | Portfolio</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jian Hui | Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="css/fontAwesome.css">
-        <link rel="stylesheet" href="css/light-box.css">
-        <link rel="stylesheet" href="css/templatemo-main.css">
+  :root {
+    --cream: #F5F0E8;
+    --ink: #1A1612;
+    --muted: #8A837A;
+    --accent: #C84B2F;
+    --accent-light: #F2EAE6;
+    --border: rgba(26,22,18,0.12);
+    --section-gap: 120px;
+  }
 
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+  html { scroll-behavior: smooth; }
 
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-    </head>
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
 
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 3rem;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: var(--section-gap) 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    gap: 4rem;
+  }
+
+  .hero-text { flex: 1; }
+
+  .hero-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 1.05;
+    margin-bottom: 0.25rem;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-tagline {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin: 1.5rem 0 2.5rem;
+    max-width: 480px;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn-primary {
+    padding: 0.75rem 2rem;
+    background: var(--ink);
+    color: var(--cream);
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+
+  .btn-secondary {
+    padding: 0.75rem 2rem;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--ink); color: var(--accent); }
+
+  .hero-image {
+    width: 320px; height: 380px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .hero-image::before {
+    content: '';
+    position: absolute;
+    inset: 12px -12px -12px 12px;
+    border: 1px solid var(--border);
+    z-index: 0;
+  }
+
+  .hero-image img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top;
+    position: relative; z-index: 1;
+    display: block;
+  }
+
+  .hero-img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(145deg, #E8E0D4 0%, #D4C9B8 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    color: var(--muted);
+    position: relative; z-index: 1;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%; height: 1px;
+    background: var(--border);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .about-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-body {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.85;
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+
+  .about-stats {
+    display: flex; gap: 2.5rem;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .about-image {
+    position: relative;
+    height: 420px;
+  }
+
+  .about-image img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top;
+    display: block;
+  }
+
+  .about-img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(145deg, #DDD5C8 0%, #C8BCA9 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; color: var(--muted);
+  }
+
+  .about-tag {
+    position: absolute;
+    bottom: -1.5rem; left: -1.5rem;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 1rem 1.5rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  .about-tag strong {
+    display: block;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--cream); }
+
+  .skills-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+    gap: 2rem;
+  }
+
+  .skills-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    line-height: 1.15;
+    max-width: 400px;
+  }
+
+  .skills-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 340px;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .skill-card {
+    background: var(--cream);
+    padding: 2.5rem;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card:hover { background: var(--accent-light); }
+
+  .skill-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.5rem;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .skill-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+  }
+
+  .skill-link {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 1px;
+    transition: opacity 0.2s;
+  }
+  .skill-link:hover { opacity: 0.65; }
+
+  /* ── WORK ── */
+  .work-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    margin-bottom: 3rem;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .work-card {
+    border: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    background: var(--cream);
+  }
+
+  .work-card-img {
+    width: 100%; aspect-ratio: 4/3;
+    overflow: hidden;
+  }
+
+  .work-card-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    display: block;
+  }
+
+  .work-img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(145deg, #E0D8CC 0%, #CCC1B0 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: var(--muted);
+  }
+
+  .work-card:hover .work-card-img img { transform: scale(1.04); }
+
+  .work-card-info {
+    padding: 1.25rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .work-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+
+  .work-card-desc {
+    font-size: 0.825rem;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .work-card-arrow {
+    position: absolute; top: 1rem; right: 1rem;
+    width: 32px; height: 32px;
+    background: var(--ink);
+    color: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .work-card:hover .work-card-arrow { opacity: 1; }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--ink);
+    color: var(--cream);
+    max-width: 100%;
+    padding: var(--section-gap) 3rem;
+  }
+
+  .contact-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .contact-label { color: rgba(245,240,232,0.45); }
+
+  .contact-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .contact-heading em { font-style: italic; color: var(--accent); }
+
+  .contact-sub {
+    font-size: 0.9rem;
+    color: rgba(245,240,232,0.55);
+    line-height: 1.75;
+    font-weight: 300;
+    margin-bottom: 2.5rem;
+  }
+
+  .contact-info { display: flex; flex-direction: column; gap: 1rem; }
+
+  .contact-info-item {
+    font-size: 0.875rem;
+    color: rgba(245,240,232,0.7);
+  }
+  .contact-info-item strong {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.35);
+    margin-bottom: 0.2rem;
+    font-weight: 400;
+  }
+
+  .form-field {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-field input,
+  .form-field textarea {
+    width: 100%;
+    background: rgba(245,240,232,0.06);
+    border: 1px solid rgba(245,240,232,0.15);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    padding: 0.9rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+  .form-field input::placeholder,
+  .form-field textarea::placeholder { color: rgba(245,240,232,0.3); }
+  .form-field input:focus,
+  .form-field textarea:focus { border-color: rgba(245,240,232,0.45); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .btn-send {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--accent);
+    color: var(--cream);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    margin-top: 0.5rem;
+  }
+  .btn-send:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    border-top: 1px solid rgba(245,240,232,0.1);
+    padding: 1.5rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  footer p {
+    font-size: 0.78rem;
+    color: rgba(245,240,232,0.3);
+    letter-spacing: 0.04em;
+  }
+
+  .footer-logo {
+    font-family: 'DM Serif Display', serif;
+    color: rgba(245,240,232,0.5);
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1.25rem; }
+    section { padding: 80px 1.5rem; }
+    #home { flex-direction: column-reverse; gap: 2rem; padding-top: 100px; }
+    .hero-image { width: 100%; height: 260px; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .about-tag { left: 0; }
+    .skills-intro { flex-direction: column; align-items: flex-start; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .work-grid { grid-template-columns: 1fr; }
+    .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .form-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
 <body>
-    
-    <div class="sequence">
-  
-      <!-- <div class="seq-preloader">
-        <svg width="39" height="16" viewBox="0 0 39 16" xmlns="http://www.w3.org/2000/svg" class="seq-preload-indicator"><g fill="#F96D38"><path class="seq-preload-circle seq-preload-circle-1" d="M3.999 12.012c2.209 0 3.999-1.791 3.999-3.999s-1.79-3.999-3.999-3.999-3.999 1.791-3.999 3.999 1.79 3.999 3.999 3.999z"/><path class="seq-preload-circle seq-preload-circle-2" d="M15.996 13.468c3.018 0 5.465-2.447 5.465-5.466 0-3.018-2.447-5.465-5.465-5.465-3.019 0-5.466 2.447-5.466 5.465 0 3.019 2.447 5.466 5.466 5.466z"/><path class="seq-preload-circle seq-preload-circle-3" d="M31.322 15.334c4.049 0 7.332-3.282 7.332-7.332 0-4.049-3.282-7.332-7.332-7.332s-7.332 3.283-7.332 7.332c0 4.05 3.283 7.332 7.332 7.332z"/></g></svg>
-      </div> -->
-      
+
+<!-- NAV -->
+<nav>
+  <a href="#home" class="nav-logo">JIAN<span>HUI</span></a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-text fade-up">
+    <p class="section-label">Software Engineer</p>
+    <h1 class="hero-name">
+      Jian<br><em>Hui Leong</em>
+    </h1>
+    <p class="hero-tagline">
+      Crafting robust back-end systems and leading projects with precision — always learning, always building.
+    </p>
+    <div class="hero-btns">
+      <a href="#work" class="btn-primary">View My Work</a>
+      <a href="https://github.com/jianhui99/" target="_blank" class="btn-secondary">Github →</a>
     </div>
-        <nav>
-          <div class="logo">
-              <h1>
-                  <span class="logo-1st">JIAN</span><span class="logo-2nd">HUI</span>
-              </h1>
-          </div>
-          <ul>
-            <li><a href="#1"><i class="fa fa-home"></i> <em>Home</em></a></li>
-            <li><a href="#2"><i class="fa fa-user"></i> <em>About</em></a></li>
-            <li><a href="#3"><i class="fa fa-pencil"></i> <em>Skills</em></a></li>
-            <li><a href="#4"><i class="fa fa-image"></i> <em>Work</em></a></li>
-            <li><a href="#5"><i class="fa fa-envelope"></i> <em>Contact</em></a></li>
-          </ul>
-        </nav>
-        
-        <div class="slides">
-          <!-- home -->
-          <div class="slide" id="1">
-            <div class="content first-content">
-              <div class="container-fluid">
-                  <div class="col-md-3">
-                      <div class="author-image"><img src="img/home/hhh.jpg" alt="Author Image"></div>
-                  </div>
-                  <div class="col-md-9">
-                      <h2>Jian Hui Leong</h2>
-                      <p>I am a back-end developer and a project manager. I keep learning and exploring to improving my back-end technology, logic, and organizational skills on my programming journey...</p>
-                      <div class="main-btn"><a href="#2">Read More</a></div>
-                      <div class="fb-btn"><a rel="nofollow" href="https://web.facebook.com/jhleong99/?_rdc=1&_rdr" target="_blank">My FB Page</a></div>
-                  </div>
-              </div>
-            </div>
-          </div>
+  </div>
+  <div class="hero-image fade-up" style="transition-delay:0.15s">
+    <img src="img/home/hhh.jpg" alt="Jian Hui">
+  </div>
+</section>
 
-          <!-- about -->
-          <div class="slide" id="2">
-            <div class="content second-content">
-                <div class="container-fluid">
-                    <div class="col-md-6">
-                        <div class="left-content">
-                            <h2>About Me</h2>
-                            <p>I have two years of experience in programming. At present, I have participated in more than 10 projects in my work.</p> 
-                            <p>I am mainly responsible for back-end development and system testing. The back-end development is mainly for admin side, and create API for mobile application. For the application project, I also am the one who handles the mobile UI design(wireframe design).</p> 
-                            <p>And then, my second position on my current work is a project manager, my responsible for manager the project progress, create ticket for my developer, and deal with client side.</p> 
-                          <div class="main-btn"><a href="#3">Read More</a></div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="right-image">
-                          <!-- <img src="img/about_image.jpg" alt=""> -->
-                          <img src="img/home/hui-pro.PNG" alt="">
-                      </div>
-                    </div>
-                </div>
-            </div>
-          </div>
+<div class="divider"></div>
 
-          <!-- skills -->
-          <div class="slide" id="3">
-            <div class="content third-content">
-                <div class="container-fluid">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="first-section">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="left-content">
-                                                <h2>Laravel</h2>
-                                                <p>Laravel is a free, open-source PHP web framework, created by Taylor Otwell and intended for the development of web applications following the model–view–controller architectural pattern and based on Symfony.</p>
-                                                <div class="details-btn"><a href="https://laravel.com/docs/8.x/readme" target="_blank">More Details</a></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="right-image">
-                                                <img src="img/skills/laravel.png" alt="first service">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="second-section">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="left-image">
-                                                <img src="img/skills/laravel-api.png" alt="second service">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="right-content">
-                                                <h2>Laravel Restful API</h2>
-                                                <p>A REST API (also known as RESTful API) is an application programming interface that conforms to the constraints of REST architectural style and allows for interaction with RESTful web services. </p>
-                                                <div class="details-btn"><a href="https://laravel.com/docs/8.x/eloquent-resources#introduction" target="_blank">More Details</a></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="custom-spacing"></div>
-                            
-                            <div class="first-section">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="left-content">
-                                                <h2>Laravel-Admin</h2>
-                                                <p>laravel-admin is administrative interface builder for laravel which can help you build CRUD backends just with few lines of code.</p>
-                                                <div class="details-btn"><a href="https://laravel-admin.org/docs/zh/1.x" target="_blank">More Details</a></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="right-image">
-                                                <img src="img/skills/laravel-admin.png" alt="first service">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="second-section">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="left-image">
-                                                <img src="img/skills/opencart.jpg" alt="second service">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="right-content">
-                                                <h2>OpenCart</h2>
-                                                <p>OpenCart is an online store management system. It is PHP-based, using a MySQL database and HTML components.</p>
-                                                <div class="details-btn"><a href="https://www.opencart.com/" target="_blank">More Details</a></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-          </div>
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="fade-up">
+      <p class="section-label">About Me</p>
+      <h2 class="about-heading">Software Engineer.<br>Problem Solver.</h2>
+        <p class="about-body">
+            With over 6 years of software engineering expertise, I specialize in architecting high-performance back-end systems and cloud-native solutions. My technical backbone consists of <strong>Golang, Python, and Cloud Infrastructure (Azure/AWS/Aliyun)</strong>, with a proven track record of delivering scalable production environments.
+        </p>
 
-          <!-- work -->
-          <div class="slide" id="4">
-            <div class="content fourth-content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-4 col-sm-6">
-                            <div class="item">
-                                <div class="thumb">
-                                    <a href="https://reskills.com/" target="_blank"><div class="hover-effect">
-                                        <div class="hover-content">
-                                            <h2>Reskills</h2>
-                                            <p>An online learning community platform with more and more teachers and courses for individuals to discover and learn courses and courses.</p>
-                                        </div>
-                                    </div></a>
-                                    <div class="image">
-                                        <img src="img/work/reskills.jpg" height="185px">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-6">
-                            <div class="item">
-                                <div class="thumb">
-                                    <a href="https://amaron36.com/" target="_blank"><div class="hover-effect">
-                                        <div class="hover-content">
-                                            <h2>Amaron36</h2>
-                                            <p>we arm with more than 100 years of combined Malaysian automotive batteries business to introduce this quality product to the ever-growing automotive market.</p>
-                                        </div>
-                                    </div></a>
-                                    <div class="image">
-                                        <img src="img/work/amaron36.jpg" height="185px">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-6">
-                            <div class="item">
-                                <div class="thumb">
-                                    <a href="https://payment.mazars.my/" target="_blank"><div class="hover-effect">
-                                        <div class="hover-content">
-                                            <h2>Mazars Payment</h2>
-                                            <p>Mazars is a global audit, accounting and consulting group employing more than 42,000 professionals in more than 90 countries through member firms.</p>
-                                        </div>
-                                    </div></a>
-                                    <div class="image">
-                                        <img src="img/work/mazars.png" height="185px">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-6">
-                            <div class="item">
-                                <div class="thumb">
-                                    <a href="https://greenbatt.com.my/" target="_blank"><div class="hover-effect">
-                                        <div class="hover-content">
-                                            <h2>GreenBatt</h2>
-                                            <p>We distribute car batteries nationwide. With our in-house QR code warranty program, we offer authentic Oursun battery & extended warranty to you!</p>
-                                        </div>
-                                    </div></a>
-                                    <div class="image">
-                                        <img src="img/work/greenbatt.png" height="185px">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-sm-6">
-                            <div class="item">
-                                <div class="thumb">
-                                    <a href="https://www.classicchair.com.my/" target="_blank"><div class="hover-effect">
-                                        <div class="hover-content">
-                                            <h2>Classic Chair</h2>
-                                            <p>Driven by our passion, we are dedicated to enhance the office environment into extra flexible and structured as well as creating and improving workplace solutions.</p>
-                                        </div>
-                                    </div></a>
-                                    <div class="image">
-                                        <img src="img/work/classchair-1.png" height="185px">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-          </div>
+        <p class="about-body">
+            Currently, I focus on the intersection of <strong>DevOps and AI Engineering</strong>—leveraging CI/CD automation, Docker/Kubernetes orchestration, and advanced Prompt Engineering to build intelligent, resilient applications. My experience as an SDE within the Microsoft ecosystem has refined my ability to navigate complex enterprise workflows and high-stakes system designs.
+        </p>
 
-          <!-- contact  -->
-          <div class="slide" id="5">
-            <div class="content fifth-content">
-                <div class="container-fluid">
-                    <div class="col-md-6">
-                        <div id="map">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127482.75186845912!2d101.53813799023197!3d3.1379811600511074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc4ececc1c7c97%3A0x524c8e31e929bc76!2sPetaling%20Jaya%2C%20Selangor!5e0!3m2!1sen!2smy!4v1631969411283!5m2!1sen!2smy" width="100%" height="500px" frameborder="0" style="border:0;" allowfullscreen loading="lazy"></iframe>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <form id="contact">
-                            <div class="row">
-                                <div class="col-md-12">
-                                  <fieldset>
-                                    <input name="name" type="text" class="form-control" id="name" placeholder="Your name..." required="">
-                                  </fieldset>
-                                </div>
-                                <div class="col-md-12">
-                                  <fieldset>
-                                    <input name="email" type="email" class="form-control" id="email" placeholder="Your email..." required="">
-                                  </fieldset>
-                                </div>
-                                 <div class="col-md-12">
-                                  <fieldset>
-                                    <input name="subject" type="text" class="form-control" id="subject" placeholder="Subject..." required="">
-                                  </fieldset>
-                                </div>
-                                <div class="col-md-12">
-                                  <fieldset>
-                                    <textarea name="message" rows="6" class="form-control" id="message" placeholder="Your message..." required=""></textarea>
-                                  </fieldset>
-                                </div>
-                                <div class="col-md-12">
-                                  <fieldset>
-                                    <button id="sendEmailBtn" class="btn">Send Now</button>
-                                </fieldset>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-          </div>
+        <p class="about-body">
+            Beyond core development, I act as a technical lead and strategic bridge, translating intricate business requirements into executable technical roadmaps. Whether it's optimizing RAG-based AI pipelines or managing full-lifecycle project delivery, I am committed to engineering excellence and analytical precision.
+        </p>
+      <div class="about-stats">
+        <div>
+          <div class="stat-num">50+</div>
+          <div class="stat-label">Projects</div>
         </div>
-
-        <div class="footer">
-          <div class="content">
-              <p>Copyright &copy; 2020 Jian | All Rights Reserved</p>
-          </div>
+        <div>
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Years Exp.</div>
         </div>
- 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+        <div>
+          <div class="stat-num">10+</div>
+          <div class="stat-label">Core Skills</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-image fade-up" style="transition-delay:0.2s">
+      <!-- <div class="about-img-placeholder">JH</div> -->
+      <img src="img/IMG_0109.JPG" alt="Jian Hui">
+      <div class="about-tag">
+        <strong>Jian Hui</strong>
+        Kuala Lumpur, Malaysia
+      </div>
+    </div>
+  </div>
+</section>
 
-    <script src="js/vendor/bootstrap.min.js"></script>
-    
-    <script src="js/datepicker.js"></script>
-    <script src="js/plugins.js"></script>
-    <script src="js/main.js"></script>
+<div class="divider"></div>
 
-    <script type="text/javascript">
-    $(document).ready(function() {
-        // navigation click actions 
-        $('.scroll-link').on('click', function(event){
-            event.preventDefault();
-            var sectionID = $(this).attr("data-id");
-            scrollToID('#' + sectionID, 750);
-        });
-        // scroll to top action
-        $('.scroll-top').on('click', function(event) {
-            event.preventDefault();
-            $('html, body').animate({scrollTop:0}, 'slow');         
-        });
-        // mobile nav toggle
-        $('#nav-toggle').on('click', function (event) {
-            event.preventDefault();
-            $('#main-nav').toggleClass("open");
-        });
+<!-- SKILLS -->
+<section id="skills">
+  <div class="skills-intro fade-up">
+    <div>
+      <p class="section-label">Skills</p>
+      <h2 class="skills-heading">Technologies I Work With</h2>
+    </div>
+    <p class="skills-desc">
+      Focused on back-end frameworks and tools that power scalable, production-ready web applications.
+    </p>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card fade-up">
+      <div class="skill-number">01</div>
+      <h3 class="skill-name">Laravel</h3>
+      <p class="skill-desc">A free, open-source PHP framework following the MVC pattern — my primary tool for building structured, maintainable web applications.</p>
+      <a href="https://laravel.com/docs/8.x/readme" target="_blank" class="skill-link">Documentation →</a>
+    </div>
+    <div class="skill-card fade-up" style="transition-delay:0.1s">
+      <div class="skill-number">02</div>
+      <h3 class="skill-name">Laravel RESTful API</h3>
+      <p class="skill-desc">Building clean, resource-based APIs for mobile applications — conforming to REST architectural constraints for seamless client-server interaction.</p>
+      <a href="https://laravel.com/docs/8.x/eloquent-resources" target="_blank" class="skill-link">Documentation →</a>
+    </div>
+    <div class="skill-card fade-up" style="transition-delay:0.15s">
+      <div class="skill-number">03</div>
+      <h3 class="skill-name">Laravel Admin</h3>
+      <p class="skill-desc">An administrative interface builder that lets me deliver full-featured CRUD backends quickly — ideal for rapid project delivery.</p>
+      <a href="https://laravel-admin.org/docs/zh/1.x" target="_blank" class="skill-link">Documentation →</a>
+    </div>
+    <div class="skill-card fade-up" style="transition-delay:0.2s">
+      <div class="skill-number">04</div>
+      <h3 class="skill-name">OpenCart</h3>
+      <p class="skill-desc">PHP-based e-commerce platform using MySQL and HTML — used for building and customising online store management systems.</p>
+      <a href="https://www.opencart.com/" target="_blank" class="skill-link">Website →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WORK -->
+<section id="work">
+  <p class="section-label fade-up">Selected Work</p>
+  <h2 class="work-heading fade-up">Projects I've Built</h2>
+  <div class="work-grid">
+    <a href="https://reskills.com/" target="_blank" class="work-card fade-up">
+      <div class="work-card-img">
+        <img src="img/work/reskills.jpg" alt="Reskills">
+      </div>
+      <div class="work-card-info">
+        <h3 class="work-card-title">Reskills</h3>
+        <p class="work-card-desc">Online learning community platform for discovering and enrolling in courses.</p>
+      </div>
+      <div class="work-card-arrow">↗</div>
+    </a>
+    <a href="https://amaron36.com/" target="_blank" class="work-card fade-up" style="transition-delay:0.08s">
+      <div class="work-card-img">
+        <img src="img/work/amaron36.jpg" alt="Amaron36">
+      </div>
+      <div class="work-card-info">
+        <h3 class="work-card-title">Amaron36</h3>
+        <p class="work-card-desc">Automotive battery e-commerce site backed by 100+ years of Malaysian industry expertise.</p>
+      </div>
+      <div class="work-card-arrow">↗</div>
+    </a>
+    <a href="https://payment.mazars.my/" target="_blank" class="work-card fade-up" style="transition-delay:0.16s">
+      <div class="work-card-img">
+        <img src="img/work/mazars.png" alt="Mazars">
+      </div>
+      <div class="work-card-info">
+        <h3 class="work-card-title">Mazars Payment</h3>
+        <p class="work-card-desc">Payment portal for a global audit & consulting group with 42,000+ professionals worldwide.</p>
+      </div>
+      <div class="work-card-arrow">↗</div>
+    </a>
+    <a href="https://greenbatt.com.my/" target="_blank" class="work-card fade-up" style="transition-delay:0.08s">
+      <div class="work-card-img">
+        <img src="img/work/greenbatt.png" alt="GreenBatt">
+      </div>
+      <div class="work-card-info">
+        <h3 class="work-card-title">GreenBatt</h3>
+        <p class="work-card-desc">Nationwide car battery distribution with in-house QR code warranty program.</p>
+      </div>
+      <div class="work-card-arrow">↗</div>
+    </a>
+    <a href="https://www.classicchair.com.my/" target="_blank" class="work-card fade-up" style="transition-delay:0.16s">
+      <div class="work-card-img">
+        <img src="img/work/classchair-1.png" alt="Classic Chair">
+      </div>
+      <div class="work-card-info">
+        <h3 class="work-card-title">Classic Chair</h3>
+        <p class="work-card-desc">Office furniture brand focused on flexible, structured workplace solutions.</p>
+      </div>
+      <div class="work-card-arrow">↗</div>
+    </a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="padding: var(--section-gap) 0; max-width: 100%; margin: 0;">
+  <div class="contact-inner">
+    <div class="fade-up">
+      <p class="section-label contact-label">Contact</p>
+      <h2 class="contact-heading">Let's work<br><em>together.</em></h2>
+      <p class="contact-sub">Have a project in mind or just want to say hello? Drop me a message and I'll get back to you.</p>
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <strong>Email</strong>
+          jianhui9998@gmail.com
+        </div>
+        <div class="contact-info-item">
+          <strong>Location</strong>
+          Kuala Lumpur, Malaysia
+        </div>
+      </div>
+    </div>
+    <div class="fade-up" style="transition-delay:0.15s">
+      <div class="form-row">
+        <div class="form-field">
+          <input type="text" id="name" placeholder="Your name">
+        </div>
+        <div class="form-field">
+          <input type="email" id="email" placeholder="Your email">
+        </div>
+      </div>
+      <div class="form-field">
+        <input type="text" id="subject" placeholder="Subject">
+      </div>
+      <div class="form-field">
+        <textarea id="message" rows="5" placeholder="Your message..."></textarea>
+      </div>
+      <button class="btn-send" id="sendBtn">Send Message</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#home" class="footer-logo">JIANHUI</a>
+  <p>© 2026 Jian Hui Leong — All rights reserved</p>
+</footer>
+
+<script>
+  // Scroll-triggered fade
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) { el.target.classList.add('visible'); }
     });
-    // scroll function
-    function scrollToID(id, speed){
-        var offSet = 0;
-        var targetOffset = $(id).offset().top - offSet;
-        var mainNav = $('#main-nav');
-        $('html,body').animate({scrollTop:targetOffset}, speed);
-        if (mainNav.hasClass("open")) {
-            mainNav.css("height", "1px").removeClass("in").addClass("collapse");
-            mainNav.removeClass("open");
-        }
-    }
-    if (typeof console === "undefined") {
-        console = {
-            log: function() { }
-        };
-    }
-    
-    $('#sendEmailBtn').on('click', function (){
-        var username = $('#name').val();
-        var email = $('#email').val();
-        var subject = $('#subject').val();
-        var message = $('#message').val();
-        var content = "Username: " + username + ", Email: " + email + " | Message: " + message;
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        if(username == '' || subject == '' || message == '' || email == ''){
-            alert('Please key in the required info');
-        }else{
-            window.open("mailto:jianhui9998@gmail.com?subject="+subject+"&body="+ content);
-        }
-    });     
-    </script>
+  // Contact form
+  document.getElementById('sendBtn').addEventListener('click', function() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const subject = document.getElementById('subject').value.trim();
+    const message = document.getElementById('message').value.trim();
+    if (!name || !email || !subject || !message) {
+      alert('Please fill in all fields.');
+      return;
+    }
+    const body = `Name: ${name}, Email: ${email} | Message: ${message}`;
+    window.open(`mailto:jianhui9998@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+  });
+</script>
 </body>
 </html>
