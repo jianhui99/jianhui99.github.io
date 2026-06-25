@@ -1,11 +1,1065 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume Builder</title>
+<style>
+  :root {
+    --ui-bg: #eef1f4;
+    --ui-panel: #ffffff;
+    --ui-border: #d4dae0;
+    --ui-accent: #1f3b4d;
+    --ui-accent-light: #2d5168;
+    --ui-text: #2b2b2b;
+    --ui-muted: #6a7884;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--ui-bg);
+    color: var(--ui-text);
+  }
+
+  /* ---------- App layout ---------- */
+  .app { display: flex; height: 100vh; overflow: hidden; }
+  .editor {
+    width: 42%;
+    min-width: 380px;
+    max-width: 640px;
+    overflow-y: auto;
+    background: var(--ui-panel);
+    border-right: 1px solid var(--ui-border);
+    padding: 18px 20px 60px;
+  }
+  .preview-pane {
+    flex: 1;
+    overflow: auto;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #c9d2da;
+  }
+  /* Scaler is a spacer that reserves the scaled footprint of the resume */
+  .preview-scaler {
+    flex: 0 0 auto;
+  }
+
+  /* ---------- Mobile tab bar (hidden on desktop) ---------- */
+  .mobile-tabs { display: none; }
+
+  .app-title { font-size: 18px; font-weight: 700; color: var(--ui-accent); margin: 0 0 4px; }
+  .app-sub { font-size: 12px; color: var(--ui-muted); margin: 0 0 16px; }
+
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--ui-panel);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0 12px;
+    border-bottom: 1px solid var(--ui-border);
+    margin-bottom: 14px;
+  }
+  .btn {
+    border: 1px solid var(--ui-accent);
+    background: var(--ui-accent);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .btn:hover { opacity: .88; }
+  .btn.secondary { background: #fff; color: var(--ui-accent); }
+  .btn.danger { background: #fff; color: #b3261e; border-color: #b3261e; }
+
+  details.section {
+    border: 1px solid var(--ui-border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background: #fbfcfd;
+    overflow: hidden;
+  }
+  details.section > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 10px 14px;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--ui-accent);
+    background: #f1f5f8;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  details.section > summary::-webkit-details-marker { display: none; }
+  details.section > summary::after { content: "▾"; font-size: 11px; color: var(--ui-muted); }
+  details.section[open] > summary::after { content: "▴"; }
+  .section-body { padding: 12px 14px 16px; }
+
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 11.5px; font-weight: 600; color: var(--ui-muted); margin-bottom: 4px; }
+  .field input[type=text],
+  .field input[type=email],
+  .field select,
+  .field textarea {
+    width: 100%;
+    border: 1px solid var(--ui-border);
+    border-radius: 5px;
+    padding: 7px 9px;
+    font-size: 12.5px;
+    font-family: inherit;
+    color: var(--ui-text);
+    background: #fff;
+  }
+  .field textarea { resize: vertical; min-height: 56px; line-height: 1.45; }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: 2px solid var(--ui-accent-light); border-color: var(--ui-accent-light); }
+  .field select { cursor: pointer; height: 34px; }
+  .hint { font-size: 10.5px; color: var(--ui-muted); margin-top: 3px; }
+  .row2 { display: flex; gap: 10px; }
+  .row2 > .field { flex: 1; }
+
+  .item-card {
+    border: 1px solid var(--ui-border);
+    border-radius: 6px;
+    padding: 10px 11px;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+  .item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .item-head .item-label { font-size: 11.5px; font-weight: 700; color: var(--ui-accent); }
+  .mini-btn {
+    border: 1px solid var(--ui-border);
+    background: #fff;
+    color: var(--ui-muted);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .mini-btn:hover { color: #b3261e; border-color: #b3261e; }
+  .add-btn {
+    border: 1px dashed var(--ui-accent);
+    background: #fff;
+    color: var(--ui-accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+  }
+  .add-btn:hover { background: #f1f5f8; }
+
+  .color-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .color-row label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--ui-muted); }
+  .color-row input[type=color] { width: 38px; height: 28px; border: 1px solid var(--ui-border); border-radius: 4px; padding: 0; background: #fff; cursor: pointer; }
+  .swatches { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--ui-border); cursor: pointer; }
+
+  .avatar-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 1px solid var(--ui-border); background: #f1f5f8; display: none; }
+  .avatar-row { display: flex; align-items: center; gap: 12px; }
+
+  /* ---------- Resume preview (mirrors resume.html) ---------- */
+  .resume-wrap {
+    --accent: #1f3b4d;
+    --accent2: #8fc7d9;
+    --accent-soft: #f3f8fa;
+    --accent-border: #3a5a6e;
+    --sidebar-text: #eef3f6;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(0,0,0,.18);
+  }
+  .resume-wrap, .resume-wrap * { box-sizing: border-box; margin: 0; padding: 0; }
+  .resume-wrap { font-family: "Segoe UI", Arial, sans-serif; color: #2b2b2b; font-size: 10.2px; line-height: 1.4; }
+  .resume-wrap .summary, .resume-wrap .job-desc, .resume-wrap ul.acc li,
+  .resume-wrap .skill-group, .resume-wrap .side-list li { overflow-wrap: break-word; word-break: break-word; }
+  .resume-wrap .page { width: 210mm; min-height: 297mm; display: flex; }
+  .resume-wrap .sidebar { width: 34%; background: var(--accent); color: var(--sidebar-text); padding: 26px 20px; }
+  .resume-wrap .profile-header { text-align: center; margin-bottom: 20px; }
+  .resume-wrap .photo { width: 104px; height: 104px; border-radius: 50%; margin: 0 auto 12px; border: 3px solid var(--accent2); background: var(--accent-light, #2d5168); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .resume-wrap .photo img { width: 100%; height: 100%; object-fit: cover; }
+  .resume-wrap .photo .photo-hint { position: absolute; font-size: 8.5px; letter-spacing: 1px; color: var(--accent2); text-align: center; line-height: 1.3; padding: 0 6px; }
+  .resume-wrap .name { font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #ffffff; line-height: 1.15; }
+  .resume-wrap .role-tag { font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent2); margin-top: 6px; }
+  .resume-wrap .side-section { margin-bottom: 18px; }
+  .resume-wrap .side-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent2); border-bottom: 1px solid var(--accent-border); padding-bottom: 4px; margin-bottom: 8px; }
+  .resume-wrap .contact-item { margin-bottom: 6px; word-break: break-word; }
+  .resume-wrap .contact-item .lbl { color: var(--accent2); font-weight: 600; }
+  .resume-wrap .skill-group { margin-bottom: 7px; }
+  .resume-wrap .skill-group .lbl { color: #ffffff; font-weight: 600; }
+  .resume-wrap .edu-date { font-size: 9px; font-style: italic; color: var(--accent2); margin-top: 1px; }
+  .resume-wrap .lang-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .resume-wrap .lang-row .lvl { color: var(--accent2); }
+  .resume-wrap ul.side-list { list-style: none; }
+  .resume-wrap ul.side-list li { margin-bottom: 5px; padding-left: 12px; position: relative; }
+  .resume-wrap ul.side-list li::before { content: "▪"; position: absolute; left: 0; color: var(--accent2); }
+  .resume-wrap .main { width: 66%; padding: 26px 28px; }
+  .resume-wrap .summary { color: #444; margin-bottom: 18px; text-align: justify; }
+  .resume-wrap .main-title { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-bottom: 12px; }
+  .resume-wrap .job { margin-bottom: 14px; break-inside: avoid; page-break-inside: avoid; }
+  .resume-wrap .side-section { break-inside: avoid; page-break-inside: avoid; }
+  .resume-wrap .job-company { font-size: 11.5px; font-weight: 700; color: var(--accent); }
+  .resume-wrap .job-meta { font-size: 9.6px; font-style: italic; color: #6a6a6a; margin-bottom: 4px; }
+  .resume-wrap .job-desc { color: #444; margin-bottom: 5px; text-align: justify; }
+  .resume-wrap ul.acc { list-style: none; }
+  .resume-wrap ul.acc li { margin-bottom: 3px; padding-left: 13px; position: relative; text-align: justify; }
+  .resume-wrap ul.acc li::before { content: "›"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+  .resume-wrap .current { background: var(--accent-soft); border-left: 3px solid var(--accent); padding: 8px 10px 8px 12px; border-radius: 2px; }
+
+  /* ---------- Print ---------- */
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .app { display: block; height: auto; overflow: visible; }
+    .editor, .mobile-tabs { display: none !important; }
+    .preview-pane { padding: 0; overflow: visible; background: #fff; display: block; }
+    .preview-scaler { transform: none !important; width: auto !important; height: auto !important; }
+    .resume-wrap { box-shadow: none; transform: none !important; width: auto !important; }
+    .resume-wrap .page { width: 210mm; min-height: 297mm; }
+  }
+
+  /* ---------- Responsive / mobile ---------- */
+  @media (max-width: 900px) {
+    .app { flex-direction: column; height: 100vh; }
+    .mobile-tabs {
+      display: flex;
+      flex: 0 0 auto;
+      border-bottom: 1px solid var(--ui-border);
+      background: var(--ui-panel);
+    }
+    .mobile-tabs button {
+      flex: 1;
+      border: none;
+      background: var(--ui-panel);
+      color: var(--ui-muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 0;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+    .mobile-tabs button.active {
+      color: var(--ui-accent);
+      border-bottom-color: var(--ui-accent);
+    }
+    .editor {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      flex: 1;
+      border-right: none;
+    }
+    .preview-pane { flex: 1; padding: 14px; }
+    /* Tab switching: show only the active pane */
+    .app[data-tab="preview"] .editor { display: none; }
+    .app[data-tab="editor"] .preview-pane { display: none; }
+  }
+  @media (max-width: 520px) {
+    .editor { padding: 14px 14px 50px; }
+    .toolbar .btn { flex: 1 1 auto; text-align: center; }
+    .preview-pane { padding: 8px; }
+  }
+</style>
 </head>
 <body>
-    <p>hello world</p>
+<div class="app" id="app">
+  <!-- ============ MOBILE TABS ============ -->
+  <div class="mobile-tabs">
+    <button type="button" data-tab="editor" id="tabEditor">✎ Edit</button>
+    <button type="button" data-tab="preview" id="tabPreview">👁 Preview</button>
+  </div>
+  <!-- ============ EDITOR ============ -->
+  <div class="editor">
+    <h1 class="app-title">Resume Builder</h1>
+    <p class="app-sub">Fill in your details — the preview updates live. Export to PDF or save your data as JSON.</p>
+
+    <div class="toolbar">
+      <button class="btn" id="btnPdf">⬇ Export PDF</button>
+      <button class="btn secondary" id="btnExportJson">⬇ Export JSON</button>
+      <button class="btn secondary" id="btnImportJson">⬆ Import JSON</button>
+      <button class="btn danger" id="btnClear">✕ Clear All</button>
+      <input type="file" id="fileImport" accept="application/json,.json" style="display:none">
+    </div>
+
+    <!-- Theme -->
+    <details class="section" open>
+      <summary>Theme Color</summary>
+      <div class="section-body">
+        <div class="color-row">
+          <label>Primary <input type="color" id="colPrimary" value="#1f3b4d"></label>
+          <label>Accent <input type="color" id="colAccent" value="#8fc7d9"></label>
+        </div>
+        <div class="swatches" id="swatches"></div>
+      </div>
+    </details>
+
+    <!-- Personal Profile -->
+    <details class="section" open>
+      <summary>Personal Profile</summary>
+      <div class="section-body">
+        <div class="avatar-row">
+          <img id="avatarPreview" class="avatar-preview" alt="">
+          <div style="flex:1">
+            <div class="field" style="margin-bottom:6px">
+              <label>Avatar Image</label>
+              <input type="file" id="avatarFile" accept="image/*">
+            </div>
+            <button class="mini-btn" id="avatarRemove" type="button">Remove avatar</button>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Firstname</label><input type="text" id="nameTop" placeholder="Firstname"></div>
+          <div class="field"><label>Lastname</label><input type="text" id="nameBottom" placeholder="Lastname"></div>
+        </div>
+        <div class="field"><label>Role Tag</label><input type="text" id="roleTag" placeholder="Your professional role..."></div>
+        <div class="field"><label>Phone</label><input type="text" id="cPhone" placeholder="+6012-3456789"></div>
+        <div class="field"><label>Email</label><input type="email" id="cEmail" placeholder="name@example.com"></div>
+        <div class="field"><label>Address</label><input type="text" id="cAddress" placeholder="Your address..."></div>
+        <div class="field"><label>Github</label><input type="text" id="cGithub" placeholder="username.github.io"></div>
+        <div class="field"><label>LinkedIn</label><input type="text" id="cLinkedin" placeholder="linkedin.com/in/username"></div>
+      </div>
+    </details>
+
+    <!-- Career Summary -->
+    <details class="section" open>
+      <summary>Career Summary</summary>
+      <div class="section-body">
+        <div class="field">
+          <label>Professional Summary</label>
+          <textarea id="summary" rows="5" placeholder="Your professional summary..."></textarea>
+          <div class="hint">Wrap text in **double asterisks** to make it bold.</div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Technical Skills -->
+    <details class="section">
+      <summary>Technical Skills</summary>
+      <div class="section-body">
+        <div id="skillsList"></div>
+        <button class="add-btn" id="addSkill" type="button">+ Add Skill Group</button>
+      </div>
+    </details>
+
+    <!-- Achievements -->
+    <details class="section">
+      <summary>Achievements</summary>
+      <div class="section-body">
+        <div id="achList"></div>
+        <button class="add-btn" id="addAch" type="button">+ Add Achievement</button>
+      </div>
+    </details>
+
+    <!-- Education -->
+    <details class="section">
+      <summary>Educational Background</summary>
+      <div class="section-body">
+        <div id="eduList"></div>
+        <button class="add-btn" id="addEdu" type="button">+ Add Education</button>
+      </div>
+    </details>
+
+    <!-- Languages -->
+    <details class="section">
+      <summary>Language Skills</summary>
+      <div class="section-body">
+        <div id="langList"></div>
+        <button class="add-btn" id="addLang" type="button">+ Add Language</button>
+      </div>
+    </details>
+
+    <!-- Work Experience -->
+    <details class="section">
+      <summary>Work Experience</summary>
+      <div class="section-body">
+        <div id="jobList"></div>
+        <button class="add-btn" id="addJob" type="button">+ Add Work Experience</button>
+      </div>
+    </details>
+  </div>
+
+  <!-- ============ PREVIEW ============ -->
+  <div class="preview-pane" id="previewPane">
+    <div class="preview-scaler" id="previewScaler">
+    <div class="resume-wrap" id="resumeWrap">
+      <div class="page">
+        <aside class="sidebar">
+          <div class="profile-header">
+            <div class="photo" id="pvPhoto"></div>
+            <div class="name" id="pvName"></div>
+            <div class="role-tag" id="pvRole"></div>
+          </div>
+          <div class="side-section">
+            <div class="side-title">Contact</div>
+            <div id="pvContact"></div>
+          </div>
+          <div class="side-section">
+            <div class="side-title">Technical Skills</div>
+            <div id="pvSkills"></div>
+          </div>
+          <div class="side-section">
+            <div class="side-title">Achievement</div>
+            <ul class="side-list" id="pvAch"></ul>
+          </div>
+          <div class="side-section">
+            <div class="side-title">Education</div>
+            <div id="pvEdu"></div>
+          </div>
+          <div class="side-section">
+            <div class="side-title">Languages</div>
+            <div id="pvLang"></div>
+          </div>
+        </aside>
+        <main class="main">
+          <div class="main-title">Professional Summary</div>
+          <div class="summary" id="pvSummary"></div>
+          <div class="main-title">Professional Experience</div>
+          <div id="pvJobs"></div>
+        </main>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ---------------- Default data (dummy sample for reference) ---------------- */
+function defaultData() {
+  return {
+    theme: { primary: "#1f3b4d", accent: "#8fc7d9" },
+    avatar: "",
+    nameTop: "JOHN",
+    nameBottom: "DOE",
+    roleTag: "Full-Stack Developer · 5+ Years",
+    contact: {
+      phone: "+1 555-0100",
+      email: "john.doe@example.com",
+      address: "San Francisco, CA",
+      github: "johndoe.github.io",
+      linkedin: "linkedin.com/in/johndoe"
+    },
+    summary: "Full-Stack Developer with **5+ years** of experience building scalable web applications and APIs. Skilled in modern JavaScript frameworks, cloud infrastructure, and clean architecture, with a track record of delivering high-impact products in fast-paced teams.",
+    skills: [
+      { label: "Languages", value: "JavaScript, TypeScript, Python, Go" },
+      { label: "Frontend", value: "React, Next.js, Vue, Tailwind CSS" },
+      { label: "Backend", value: "Node.js, Express, REST, GraphQL" },
+      { label: "Cloud & DevOps", value: "AWS, Docker, CI/CD, Terraform" },
+      { label: "Database", value: "PostgreSQL, MongoDB, Redis" }
+    ],
+    achievements: [
+      "Employee of the Year 2023 — Acme Corp.",
+      "Speaker at RegionJS Conference 2022"
+    ],
+    education: [
+      { school: "State University", degree: "B.Sc. in Computer Science", startDate: "2014", endDate: "2018" }
+    ],
+    languages: [
+      { name: "English", level: "Native" },
+      { name: "Spanish", level: "Conversational" },
+      { name: "French", level: "Basic" }
+    ],
+    jobs: [
+      {
+        company: "ACME CORP.",
+        role: "Senior Full-Stack Developer",
+        startDate: "Jan 2022",
+        endDate: "Present",
+        desc: "Lead developer on a customer-facing SaaS platform serving **50k+ users**.",
+        current: true,
+        acc: [
+          "Architected a microservices migration that cut API latency by **45%**.",
+          "Mentored a team of 4 junior engineers and introduced code-review standards.",
+          "Built a CI/CD pipeline reducing deployment time from hours to minutes."
+        ]
+      },
+      {
+        company: "BETA SOLUTIONS LLC",
+        role: "Full-Stack Developer",
+        startDate: "Jun 2019",
+        endDate: "Dec 2021",
+        desc: "Developed and maintained web applications for e-commerce clients.",
+        current: false,
+        acc: [
+          "Delivered a React storefront that increased conversions by **30%**.",
+          "Integrated multiple payment gateways and third-party APIs."
+        ]
+      },
+      {
+        company: "GAMMA STARTUP",
+        role: "Junior Developer",
+        startDate: "Jul 2018",
+        endDate: "May 2019",
+        desc: "Contributed to frontend features and bug fixes for an early-stage product.",
+        current: false,
+        acc: []
+      }
+    ]
+  };
+}
+
+const STORAGE_KEY = "resume-builder-data-v1";
+let data = migrate(load());
+
+/* ---------------- Helpers ---------------- */
+// Bring older saved/imported data up to the current schema (new date fields, etc.)
+function migrate(d) {
+  d = d || {};
+  (d.jobs || []).forEach(j => {
+    // Old format stored a combined "meta" string ("Role | Start – End")
+    if (j.meta && j.role === undefined) {
+      const parts = String(j.meta).split("|");
+      j.role = (parts[0] || "").trim();
+      const dates = (parts[1] || "").trim().split(/[–-]/);
+      j.startDate = (dates[0] || "").trim();
+      j.endDate = (dates[1] || "").trim();
+    }
+    if (j.role === undefined) j.role = "";
+    if (j.startDate === undefined) j.startDate = "";
+    if (j.endDate === undefined) j.endDate = "";
+    delete j.meta;
+  });
+  (d.education || []).forEach(e => {
+    if (e.startDate === undefined) e.startDate = "";
+    if (e.endDate === undefined) e.endDate = "";
+  });
+  return d;
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return Object.assign(defaultData(), JSON.parse(raw));
+  } catch (e) {}
+  return defaultData();
+}
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+}
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+// Escape, then convert **bold** markers into <strong>
+function fmt(s) {
+  return esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
+/* ---------------- Render preview ---------------- */
+function render() {
+  const wrap = $("resumeWrap");
+  wrap.style.setProperty("--accent", data.theme.primary);
+  wrap.style.setProperty("--accent2", data.theme.accent);
+
+  // Name
+  const nm = [esc(data.nameTop), esc(data.nameBottom)].filter(Boolean).join("<br>");
+  $("pvName").innerHTML = nm;
+  $("pvRole").innerHTML = fmt(data.roleTag);
+
+  // Photo
+  if (data.avatar) {
+    $("pvPhoto").innerHTML = '<img src="' + esc(data.avatar) + '" alt="">';
+  } else {
+    $("pvPhoto").innerHTML = '<span class="photo-hint">PHOTO</span>';
+  }
+
+  // Contact
+  const c = data.contact || {};
+  const contactRows = [
+    ["Phone", c.phone], ["Email", c.email], ["Address", c.address],
+    ["Github", c.github], ["LinkedIn", c.linkedin]
+  ].filter(r => r[1])
+   .map(r => '<div class="contact-item"><span class="lbl">' + r[0] + ':</span> ' + esc(r[1]) + '</div>')
+   .join("");
+  $("pvContact").innerHTML = contactRows;
+
+  // Skills
+  $("pvSkills").innerHTML = (data.skills || [])
+    .filter(s => s.label || s.value)
+    .map(s => '<div class="skill-group"><span class="lbl">' + esc(s.label) + ':</span> ' + fmt(s.value) + '</div>')
+    .join("");
+
+  // Achievements
+  $("pvAch").innerHTML = (data.achievements || [])
+    .filter(Boolean)
+    .map(a => '<li>' + fmt(a) + '</li>').join("");
+
+  // Education
+  $("pvEdu").innerHTML = (data.education || [])
+    .filter(e => e.school || e.degree)
+    .map(e => {
+      const dateStr = [e.startDate, e.endDate].filter(Boolean).join(" – ");
+      return '<div class="skill-group" style="margin-bottom:2px"><span class="lbl">' + esc(e.school) + '</span></div>' +
+        (e.degree ? '<div>' + esc(e.degree) + '</div>' : '') +
+        (dateStr ? '<div class="edu-date">' + esc(dateStr) + '</div>' : '') +
+        '<div style="margin-bottom:7px"></div>';
+    })
+    .join("");
+
+  // Languages
+  $("pvLang").innerHTML = (data.languages || [])
+    .filter(l => l.name || l.level)
+    .map(l => '<div class="lang-row"><span>' + esc(l.name) + '</span><span class="lvl">' + esc(l.level) + '</span></div>')
+    .join("");
+
+  // Summary
+  $("pvSummary").innerHTML = fmt(data.summary);
+
+  // Jobs
+  $("pvJobs").innerHTML = (data.jobs || []).map(j => {
+    const accHtml = (j.acc || []).filter(Boolean).length
+      ? '<ul class="acc">' + j.acc.filter(Boolean).map(a => '<li>' + fmt(a) + '</li>').join("") + '</ul>'
+      : '';
+    const dateStr = [j.startDate, j.endDate].filter(Boolean).join(" – ");
+    const metaInner = [esc(j.role), esc(dateStr)].filter(Boolean).join(" &nbsp;|&nbsp; ");
+    const metaHtml = metaInner ? '<div class="job-meta">' + metaInner + '</div>' : '';
+    const descHtml = j.desc ? '<div class="job-desc">' + fmt(j.desc) + '</div>' : '';
+    return '<div class="job' + (j.current ? ' current' : '') + '">' +
+      '<div class="job-company">' + esc(j.company) + '</div>' +
+      metaHtml + descHtml + accHtml + '</div>';
+  }).join("");
+
+  save();
+  fitPreview();
+}
+
+/* ---------------- Fit A4 preview to the available pane width ---------------- */
+function fitPreview() {
+  const pane = $("previewPane");
+  const scaler = $("previewScaler");
+  const wrap = $("resumeWrap");
+  if (!pane || !scaler || !wrap) return;
+  // Reset everything so we can measure the resume at its true (unscaled) size.
+  scaler.style.width = "";
+  scaler.style.height = "";
+  wrap.style.transform = "none";
+  wrap.style.transformOrigin = "top left";
+  wrap.style.width = "";
+  // .page has a fixed 210mm width, so measure it for the true natural size.
+  const page = wrap.querySelector(".page");
+  const natW = page ? page.offsetWidth : wrap.offsetWidth;   // ~793px (210mm)
+  const natH = page ? page.offsetHeight : wrap.offsetHeight;
+  if (!natW) return;
+  const padCss = getComputedStyle(pane);
+  const padX = parseFloat(padCss.paddingLeft) + parseFloat(padCss.paddingRight);
+  const available = pane.clientWidth - padX;
+  const scale = Math.min(1, available / natW);
+  // Scale the resume itself (so its white background + box-shadow scale with it),
+  // pin its width to the natural page width so the page never overflows.
+  wrap.style.width = natW + "px";
+  wrap.style.transform = "scale(" + scale + ")";
+  // The scaler is just a spacer that reserves the scaled footprint for scrolling/centering.
+  scaler.style.width = (natW * scale) + "px";
+  scaler.style.height = (natH * scale) + "px";
+}
+
+/* ---------------- Bind simple fields ---------------- */
+function bindInput(id, getter, setter) {
+  const el = $(id);
+  el.value = getter() || "";
+  el.addEventListener("input", () => { setter(el.value); render(); });
+}
+
+function bindSimpleFields() {
+  bindInput("nameTop", () => data.nameTop, v => data.nameTop = v);
+  bindInput("nameBottom", () => data.nameBottom, v => data.nameBottom = v);
+  bindInput("roleTag", () => data.roleTag, v => data.roleTag = v);
+  bindInput("cPhone", () => data.contact.phone, v => data.contact.phone = v);
+  bindInput("cEmail", () => data.contact.email, v => data.contact.email = v);
+  bindInput("cAddress", () => data.contact.address, v => data.contact.address = v);
+  bindInput("cGithub", () => data.contact.github, v => data.contact.github = v);
+  bindInput("cLinkedin", () => data.contact.linkedin, v => data.contact.linkedin = v);
+  bindInput("summary", () => data.summary, v => data.summary = v);
+}
+
+/* ---------------- Theme ---------------- */
+function bindTheme() {
+  $("colPrimary").value = data.theme.primary;
+  $("colAccent").value = data.theme.accent;
+  $("colPrimary").addEventListener("input", e => { data.theme.primary = e.target.value; render(); });
+  $("colAccent").addEventListener("input", e => { data.theme.accent = e.target.value; render(); });
+
+  const presets = [
+    ["#1f3b4d", "#8fc7d9"], ["#3a2f4d", "#c2a8e0"], ["#1d4036", "#86c9a8"],
+    ["#4a2c2a", "#e0a899"], ["#2b2b3a", "#9aa6d9"], ["#3d3320", "#d9c48f"]
+  ];
+  const sw = $("swatches");
+  presets.forEach(p => {
+    const b = document.createElement("div");
+    b.className = "swatch";
+    b.style.background = "linear-gradient(135deg, " + p[0] + " 50%, " + p[1] + " 50%)";
+    b.title = "Apply theme";
+    b.addEventListener("click", () => {
+      data.theme.primary = p[0]; data.theme.accent = p[1];
+      $("colPrimary").value = p[0]; $("colAccent").value = p[1];
+      render();
+    });
+    sw.appendChild(b);
+  });
+}
+
+/* ---------------- Avatar ---------------- */
+function bindAvatar() {
+  const prev = $("avatarPreview");
+  function refresh() {
+    if (data.avatar) { prev.src = data.avatar; prev.style.display = "block"; }
+    else { prev.style.display = "none"; prev.removeAttribute("src"); }
+  }
+  refresh();
+  $("avatarFile").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => { data.avatar = reader.result; refresh(); render(); };
+    reader.readAsDataURL(file);
+  });
+  $("avatarRemove").addEventListener("click", () => {
+    data.avatar = ""; $("avatarFile").value = ""; refresh(); render();
+  });
+}
+
+/* ---------------- Dynamic list builders ---------------- */
+function makeField(labelText, value, oninput, opts) {
+  opts = opts || {};
+  const wrap = document.createElement("div");
+  wrap.className = "field";
+  const lbl = document.createElement("label");
+  lbl.textContent = labelText;
+  wrap.appendChild(lbl);
+  const input = opts.textarea ? document.createElement("textarea") : document.createElement("input");
+  if (!opts.textarea) input.type = "text";
+  if (opts.textarea) input.rows = opts.rows || 3;
+  input.value = value || "";
+  input.placeholder = opts.placeholder || "";
+  input.addEventListener("input", () => { oninput(input.value); render(); });
+  wrap.appendChild(input);
+  return wrap;
+}
+
+function makeSelect(labelText, value, options, onchange) {
+  const wrap = document.createElement("div");
+  wrap.className = "field";
+  const lbl = document.createElement("label");
+  lbl.textContent = labelText;
+  wrap.appendChild(lbl);
+  const sel = document.createElement("select");
+  const opts = options.slice();
+  if (value && opts.indexOf(value) === -1) opts.unshift(value); // keep custom imported value
+  opts.forEach(o => {
+    const opt = document.createElement("option");
+    opt.value = o; opt.textContent = o;
+    if (o === value) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener("change", () => { onchange(sel.value); render(); });
+  wrap.appendChild(sel);
+  return wrap;
+}
+
+function itemCard(label, onRemove) {
+  const card = document.createElement("div");
+  card.className = "item-card";
+  const head = document.createElement("div");
+  head.className = "item-head";
+  const lab = document.createElement("span");
+  lab.className = "item-label";
+  lab.textContent = label;
+  const del = document.createElement("button");
+  del.className = "mini-btn";
+  del.type = "button";
+  del.textContent = "✕ Remove";
+  del.addEventListener("click", onRemove);
+  head.appendChild(lab); head.appendChild(del);
+  card.appendChild(head);
+  return card;
+}
+
+function renderSkills() {
+  const list = $("skillsList");
+  list.innerHTML = "";
+  data.skills.forEach((s, i) => {
+    const card = itemCard("Skill Group " + (i + 1), () => { data.skills.splice(i, 1); renderSkills(); render(); });
+    card.appendChild(makeField("Label", s.label, v => s.label = v, { placeholder: "Languages" }));
+    card.appendChild(makeField("Skills", s.value, v => s.value = v, { textarea: true, rows: 2, placeholder: "Go, Python, ..." }));
+    list.appendChild(card);
+  });
+}
+
+function renderAch() {
+  const list = $("achList");
+  list.innerHTML = "";
+  data.achievements.forEach((a, i) => {
+    const card = itemCard("Achievement " + (i + 1), () => { data.achievements.splice(i, 1); renderAch(); render(); });
+    card.appendChild(makeField("Text", a, v => data.achievements[i] = v, { textarea: true, rows: 2, placeholder: "Best Employee of the year — Company" }));
+    list.appendChild(card);
+  });
+}
+
+function renderEdu() {
+  const list = $("eduList");
+  list.innerHTML = "";
+  data.education.forEach((e, i) => {
+    const card = itemCard("Education " + (i + 1), () => { data.education.splice(i, 1); renderEdu(); render(); });
+    card.appendChild(makeField("School / Institution", e.school, v => e.school = v, { placeholder: "University Name" }));
+    card.appendChild(makeField("Degree / Programme", e.degree, v => e.degree = v, { placeholder: "Degree / Programme" }));
+    const drow = document.createElement("div");
+    drow.className = "row2";
+    drow.appendChild(makeField("Start Date", e.startDate, v => e.startDate = v, { placeholder: "2018" }));
+    drow.appendChild(makeField("End Date", e.endDate, v => e.endDate = v, { placeholder: "2022" }));
+    card.appendChild(drow);
+    list.appendChild(card);
+  });
+}
+
+const LANG_LEVELS = ["Native", "Fluent", "Advanced", "Conversational", "Intermediate", "Basic"];
+
+function renderLang() {
+  const list = $("langList");
+  list.innerHTML = "";
+  data.languages.forEach((l, i) => {
+    if (!l.level) l.level = "Fluent";
+    const card = itemCard("Language " + (i + 1), () => { data.languages.splice(i, 1); renderLang(); render(); });
+    const row = document.createElement("div");
+    row.className = "row2";
+    row.appendChild(makeField("Language", l.name, v => l.name = v, { placeholder: "English" }));
+    row.appendChild(makeSelect("Level", l.level, LANG_LEVELS, v => l.level = v));
+    card.appendChild(row);
+    list.appendChild(card);
+  });
+}
+
+function renderJobs() {
+  const list = $("jobList");
+  list.innerHTML = "";
+  data.jobs.forEach((j, i) => {
+    const card = itemCard("Experience " + (i + 1), () => { data.jobs.splice(i, 1); renderJobs(); render(); });
+    card.appendChild(makeField("Company", j.company, v => j.company = v, { placeholder: "COMPANY NAME" }));
+    card.appendChild(makeField("Role / Title", j.role, v => j.role = v, { placeholder: "Software Engineer" }));
+    const jdrow = document.createElement("div");
+    jdrow.className = "row2";
+    jdrow.appendChild(makeField("Start Date", j.startDate, v => j.startDate = v, { placeholder: "Jan 2024" }));
+    jdrow.appendChild(makeField("End Date", j.endDate, v => j.endDate = v, { placeholder: "Present" }));
+    card.appendChild(jdrow);
+    card.appendChild(makeField("Description", j.desc, v => j.desc = v, { textarea: true, rows: 2, placeholder: "Short role description" }));
+
+    // current toggle
+    const togWrap = document.createElement("div");
+    togWrap.className = "field";
+    const tl = document.createElement("label");
+    tl.style.display = "flex"; tl.style.alignItems = "center"; tl.style.gap = "8px"; tl.style.cursor = "pointer";
+    const chk = document.createElement("input");
+    chk.type = "checkbox"; chk.checked = !!j.current;
+    chk.style.width = "auto";
+    chk.addEventListener("change", () => { j.current = chk.checked; render(); });
+    tl.appendChild(chk);
+    tl.appendChild(document.createTextNode("Highlight as current role"));
+    togWrap.appendChild(tl);
+    card.appendChild(togWrap);
+
+    // accomplishments
+    const accLabel = document.createElement("div");
+    accLabel.className = "field";
+    accLabel.innerHTML = '<label>Accomplishments</label>';
+    card.appendChild(accLabel);
+    j.acc = j.acc || [];
+    j.acc.forEach((a, ai) => {
+      const arow = document.createElement("div");
+      arow.style.display = "flex"; arow.style.gap = "6px"; arow.style.marginBottom = "6px";
+      const inp = document.createElement("textarea");
+      inp.rows = 2; inp.value = a; inp.style.flex = "1";
+      inp.style.border = "1px solid #d4dae0"; inp.style.borderRadius = "5px";
+      inp.style.padding = "6px 8px"; inp.style.fontSize = "12px"; inp.style.fontFamily = "inherit";
+      inp.placeholder = "Achieved X by doing Y (**bold** supported)";
+      inp.addEventListener("input", () => { j.acc[ai] = inp.value; render(); });
+      const rm = document.createElement("button");
+      rm.className = "mini-btn"; rm.type = "button"; rm.textContent = "✕";
+      rm.addEventListener("click", () => { j.acc.splice(ai, 1); renderJobs(); render(); });
+      arow.appendChild(inp); arow.appendChild(rm);
+      card.appendChild(arow);
+    });
+    const addAcc = document.createElement("button");
+    addAcc.className = "mini-btn"; addAcc.type = "button"; addAcc.textContent = "+ Add accomplishment";
+    addAcc.addEventListener("click", () => { j.acc.push(""); renderJobs(); render(); });
+    card.appendChild(addAcc);
+
+    list.appendChild(card);
+  });
+}
+
+function renderAllLists() {
+  renderSkills(); renderAch(); renderEdu(); renderLang(); renderJobs();
+}
+
+/* ---------------- Add buttons ---------------- */
+function bindAddButtons() {
+  $("addSkill").addEventListener("click", () => { data.skills.push({ label: "", value: "" }); renderSkills(); render(); });
+  $("addAch").addEventListener("click", () => { data.achievements.push(""); renderAch(); render(); });
+  $("addEdu").addEventListener("click", () => { data.education.push({ school: "", degree: "", startDate: "", endDate: "" }); renderEdu(); render(); });
+  $("addLang").addEventListener("click", () => { data.languages.push({ name: "", level: "Fluent" }); renderLang(); render(); });
+  $("addJob").addEventListener("click", () => {
+    data.jobs.push({ company: "", role: "", startDate: "", endDate: "", desc: "", current: false, acc: [] });
+    renderJobs(); render();
+  });
+}
+
+/* ---------------- PDF export (isolated iframe to avoid transform bugs) ---------------- */
+function exportPdf() {
+  const resume = $("resumeWrap");
+  // Reuse the page's stylesheet so the resume looks identical; the inline
+  // CSS variables on #resumeWrap travel with outerHTML so colors are preserved.
+  const styles = Array.prototype.slice.call(document.querySelectorAll("style"))
+    .map(s => s.textContent).join("\n");
+  const html =
+    '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+    '<style>' +
+    '@page{size:A4;margin:0}' +
+    'html,body{margin:0;padding:0;background:#fff}' +
+    '*{-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+    styles +
+    '.resume-wrap{box-shadow:none!important}' +
+    '.resume-wrap .page{margin:0 auto}' +
+    '</style></head><body>' + resume.outerHTML + '</body></html>';
+
+  const iframe = document.createElement("iframe");
+  iframe.setAttribute("aria-hidden", "true");
+  iframe.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;";
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+
+  let printed = false;
+  function triggerPrint() {
+    if (printed) return;
+    printed = true;
+    try {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    } catch (e) {
+      window.print();
+    }
+    setTimeout(() => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); }, 1500);
+  }
+
+  // Wait for any images (avatar) to finish loading before printing.
+  const imgs = doc.images;
+  if (imgs && imgs.length) {
+    let remaining = imgs.length;
+    const onSettled = () => { if (--remaining <= 0) triggerPrint(); };
+    Array.prototype.slice.call(imgs).forEach(img => {
+      if (img.complete) onSettled();
+      else { img.onload = onSettled; img.onerror = onSettled; }
+    });
+    setTimeout(triggerPrint, 2000); // safety fallback
+  } else {
+    setTimeout(triggerPrint, 200);
+  }
+}
+
+/* ---------------- Toolbar actions ---------------- */
+function bindToolbar() {
+  $("btnPdf").addEventListener("click", exportPdf);
+
+  $("btnExportJson").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const base = (data.nameTop + "-" + data.nameBottom).trim().replace(/\s+/g, "-") || "resume";
+    a.href = url; a.download = base + "-resume.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  $("btnImportJson").addEventListener("click", () => $("fileImport").click());
+  $("fileImport").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const obj = JSON.parse(reader.result);
+        data = migrate(Object.assign(defaultData(), obj));
+        // normalise arrays in case of partial files
+        data.skills = data.skills || [];
+        data.achievements = data.achievements || [];
+        data.education = data.education || [];
+        data.languages = data.languages || [];
+        data.jobs = data.jobs || [];
+        rebindAll();
+        alert("Resume data imported successfully.");
+      } catch (err) {
+        alert("Could not read JSON file: " + err.message);
+      }
+      $("fileImport").value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  $("btnClear").addEventListener("click", () => {
+    if (!confirm("Clear ALL resume data? This cannot be undone.")) return;
+    data = defaultData();
+    rebindAll();
+  });
+}
+
+/* ---------------- (Re)bind everything ---------------- */
+function rebindAll() {
+  // refresh simple inputs
+  $("nameTop").value = data.nameTop || "";
+  $("nameBottom").value = data.nameBottom || "";
+  $("roleTag").value = data.roleTag || "";
+  $("cPhone").value = data.contact.phone || "";
+  $("cEmail").value = data.contact.email || "";
+  $("cAddress").value = data.contact.address || "";
+  $("cGithub").value = data.contact.github || "";
+  $("cLinkedin").value = data.contact.linkedin || "";
+  $("summary").value = data.summary || "";
+  $("colPrimary").value = data.theme.primary;
+  $("colAccent").value = data.theme.accent;
+  // avatar preview
+  const prev = $("avatarPreview");
+  if (data.avatar) { prev.src = data.avatar; prev.style.display = "block"; }
+  else { prev.style.display = "none"; prev.removeAttribute("src"); }
+  renderAllLists();
+  render();
+}
+
+/* ---------------- Mobile tabs ---------------- */
+function bindMobileTabs() {
+  const app = $("app");
+  const tabs = document.querySelectorAll(".mobile-tabs button");
+  function activate(name) {
+    app.setAttribute("data-tab", name);
+    tabs.forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+    if (name === "preview") fitPreview();
+  }
+  tabs.forEach(b => b.addEventListener("click", () => activate(b.dataset.tab)));
+  activate("editor");
+}
+
+/* ---------------- Init ---------------- */
+bindSimpleFields();
+bindTheme();
+bindAvatar();
+bindAddButtons();
+bindToolbar();
+bindMobileTabs();
+renderAllLists();
+render();
+
+window.addEventListener("resize", fitPreview);
+window.addEventListener("load", fitPreview);
+</script>
 </body>
 </html>
