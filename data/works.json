@@ -1,0 +1,92 @@
+[
+  {
+    "id": "azure-cli",
+    "title": "Azure CLI",
+    "description": "Open-source contributions as a Microsoft vendor — migrated 30+ Compute commands to AAZ and re-architected <code>az find</code>.",
+    "image": "assets/img/logo/Azure-Cli_1.webp",
+    "alt": "Azure CLI",
+    "url": "https://github.com/Azure/azure-cli",
+    "display": true
+  },
+  {
+    "id": "adi",
+    "title": "Academy in Industry (ADI)",
+    "description": "Government-backed workforce development ecosystem managed by Malaysia Productivity Corporation (MPC). Facilitates talent acquisition, industry training, job matching, and AI-assisted career guidance.",
+    "image": "assets/img/logo/adi-logo.png",
+    "alt": "ADI",
+    "url": "https://adi.gov.my/",
+    "display": true
+  },
+  {
+    "id": "abc-sales",
+    "title": "AI-Powered CRM",
+    "description": "ABC Sales AI is an AI-powered customer engagement platform that helps businesses automate conversations, manage leads, and streamline sales processes.",
+    "image": "assets/img/logo/abc-sales.jpeg",
+    "alt": "ABC Sales AI",
+    "url": "https://www.abcsales.ai/",
+    "display": true
+  },
+  {
+    "id": "tgbot",
+    "title": "TGBot",
+    "description": "Built scalable Telegram bots for the digital marketing team to interact with potential customers.",
+    "image": "assets/img/logo/Telegram-bots-2-1.webp",
+    "alt": "TGBot",
+    "url": "https://telegram.org/blog/bot-revolution",
+    "display": true
+  },
+  {
+    "id": "yingshitv",
+    "title": "影视tv",
+    "description": "Open-source PHP CMS for video, articles, manga, images & site navigation.",
+    "image": "assets/img/logo/yingshitv.webp",
+    "alt": "影视tv",
+    "url": "https://github.com/magicblack/maccms10",
+    "display": true
+  },
+  {
+    "id": "reskills",
+    "title": "Reskills",
+    "description": "Subscription-based online learning platform giving users access to unlimited live learning classes, videos, courses, conferences, and materials.",
+    "image": "assets/img/logo/reskills.jpg",
+    "alt": "Reskills",
+    "url": "https://reskills.com/",
+    "display": true
+  },
+  {
+    "id": "dodomat",
+    "title": "Dodomat MY",
+    "description": "Premium custom car mat e-commerce for the Malaysian market, with free shipping in West Malaysia.",
+    "image": "assets/img/logo/dodomat_logo.jpeg",
+    "alt": "Dodomat MY",
+    "url": "https://dodomat.com.my/",
+    "display": true
+  },
+  {
+    "id": "resume-builder",
+    "title": "Resume Builder",
+    "description": "Build powerful resumes in only 5 minutes with an easy-to-use Resume Builder and get hired faster.",
+    "image": "assets/img/logo/resume-builder.png",
+    "alt": "Resume Builder",
+    "url": "https://jianhui99.github.io/resume-builder/",
+    "display": true
+  },
+  {
+    "id": "amaron36",
+    "title": "Amaron36",
+    "description": "Automotive battery e-commerce site backed by 100+ years of Malaysian industry expertise.",
+    "image": "assets/img/logo/amaron36.jpg",
+    "alt": "Amaron36",
+    "url": "https://amaron36.com/",
+    "display": false
+  },
+  {
+    "id": "classic-chair",
+    "title": "Classic Chair",
+    "description": "Office furniture brand focused on flexible, structured workplace solutions.",
+    "image": "assets/img/logo/classchair-1.png",
+    "alt": "Classic Chair",
+    "url": "https://www.classicchair.com.my/",
+    "display": false
+  }
+]

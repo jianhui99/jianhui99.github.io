@@ -16,6 +16,7 @@
     --accent-light: #F2EAE6;
     --border: rgba(26,22,18,0.12);
     --section-gap: 120px;
+    --nav-h: 64px;
   }
 
   html { scroll-behavior: smooth; }
@@ -27,14 +28,21 @@
     overflow-x: hidden;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
   /* ── NAV ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 1.25rem 3rem;
-    background: var(--cream);
+    height: var(--nav-h);
+    padding: 0 3rem;
+    background: rgba(245,240,232,0.92);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .nav-logo {
@@ -43,6 +51,7 @@
     letter-spacing: 0.04em;
     color: var(--ink);
     text-decoration: none;
+    flex-shrink: 0;
   }
 
   .nav-logo span { color: var(--accent); }
@@ -59,8 +68,83 @@
     text-transform: uppercase;
     color: var(--muted);
     transition: color 0.2s;
+    position: relative;
   }
-  .nav-links a:hover { color: var(--ink); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+  .nav-links a:hover,
+  .nav-links a.active { color: var(--ink); }
+  .nav-links a.active::after,
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* Hamburger */
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+    z-index: 101;
+  }
+  .nav-toggle span {
+    display: block;
+    width: 22px; height: 1.5px;
+    background: var(--ink);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* Mobile menu drawer */
+  .nav-drawer {
+    display: none;
+    position: fixed;
+    top: var(--nav-h); left: 0; right: 0;
+    background: rgba(245,240,232,0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    z-index: 99;
+    transform: translateY(-8px);
+    opacity: 0;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .nav-drawer.open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .nav-drawer ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .nav-drawer ul li a {
+    display: block;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-drawer ul li:last-child a { border-bottom: none; }
+  .nav-drawer ul li a:hover,
+  .nav-drawer ul li a.active { color: var(--ink); }
 
   /* ── SECTIONS ── */
   section {
@@ -82,13 +166,16 @@
   #home {
     min-height: 100vh;
     display: flex; align-items: center;
-    padding-top: 80px;
+    padding-top: calc(var(--nav-h) + 2rem);
+    padding-bottom: 4rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
     max-width: 1100px;
     margin: 0 auto;
     gap: 4rem;
   }
 
-  .hero-text { flex: 1; }
+  .hero-text { flex: 1; min-width: 0; }
 
   .hero-name {
     font-family: 'DM Serif Display', serif;
@@ -229,16 +316,20 @@
   .about-image {
     position: relative;
     height: 420px;
+    /* Give room for the absolutely-positioned tag that hangs below */
+    padding-bottom: 2.5rem;
   }
 
-  .about-image img {
-    width: 100%; height: 100%;
+  /* The image itself fills only the space above the padding */
+  .about-image > img,
+  .about-image > .about-img-placeholder {
+    width: 100%;
+    height: calc(100% - 2.5rem);
     object-fit: cover; object-position: top;
     display: block;
   }
 
   .about-img-placeholder {
-    width: 100%; height: 100%;
     background: linear-gradient(145deg, #DDD5C8 0%, #C8BCA9 100%);
     display: flex; align-items: center; justify-content: center;
     font-size: 3rem; color: var(--muted);
@@ -246,7 +337,7 @@
 
   .about-tag {
     position: absolute;
-    bottom: -1.5rem; left: -1.5rem;
+    bottom: 0; left: -1.5rem;
     background: var(--ink);
     color: var(--cream);
     padding: 1rem 1.5rem;
@@ -442,6 +533,7 @@
   #contact {
     background: var(--ink);
     color: var(--cream);
+    /* Full bleed background with internal max-width padding */
     max-width: 100%;
     padding: var(--section-gap) 3rem;
   }
@@ -564,22 +656,116 @@
     transform: translateY(0);
   }
 
-  /* ── RESPONSIVE ── */
+  /* Work scroll hint */
+  .work-scroll-hint {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .work-scroll-hint svg { flex-shrink: 0; }
+
+  /* ── RESPONSIVE: TABLET ── */
+  @media (max-width: 1024px) {
+    nav { padding: 0 2rem; }
+    section { padding: var(--section-gap) 2rem; }
+
+    #home {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      gap: 3rem;
+    }
+    .hero-image { width: 260px; height: 320px; }
+
+    .about-grid { gap: 3rem; }
+
+    .work-grid {
+      margin: 0 -2rem;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+
+    #contact { padding: var(--section-gap) 2rem; }
+    footer { padding: 1.5rem 2rem; }
+  }
+
+  /* ── RESPONSIVE: MOBILE ── */
   @media (max-width: 768px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { gap: 1.25rem; }
-    section { padding: 80px 1.5rem; }
-    #home { flex-direction: column-reverse; gap: 2rem; padding-top: 100px; }
-    .hero-image { width: 100%; height: 260px; }
+    :root { --section-gap: 80px; }
+
+    /* Nav: hide desktop links, show hamburger + drawer */
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+    .nav-toggle { display: flex; }
+    .nav-drawer { display: block; }
+
+    /* Hero: stack vertically, image on top */
+    #home {
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 2.5rem;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+      padding-top: calc(var(--nav-h) + 1.5rem);
+      min-height: auto;
+      padding-bottom: 4rem;
+      text-align: center;
+    }
+    .hero-text { width: 100%; }
+    .hero-tagline { max-width: 100%; margin-left: auto; margin-right: auto; }
+    .hero-btns { justify-content: center; }
+    .hero-image {
+      width: min(260px, 70vw);
+      height: min(300px, 60vw);
+      flex-shrink: 0;
+    }
+    .hero-image::before { inset: 8px -8px -8px 8px; }
+
+    /* Sections */
+    section { padding: var(--section-gap) 1.25rem; }
+
+    /* About */
     .about-grid { grid-template-columns: 1fr; gap: 3rem; }
     .about-tag { left: 0; }
+    .about-image { padding-bottom: 3.5rem; }
+
+    /* Skills */
     .skills-intro { flex-direction: column; align-items: flex-start; }
     .skills-grid { grid-template-columns: 1fr; }
-    .work-grid { margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
-    .work-card { flex-basis: 78%; }
+
+    /* Work */
+    .work-scroll-hint { display: flex; }
+    .work-grid {
+      margin: 0 -1.25rem;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+    .work-card { flex-basis: min(80vw, 290px); }
+
+    /* Contact */
+    #contact { padding: var(--section-gap) 1.25rem; }
     .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
     .form-row { grid-template-columns: 1fr; }
-    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+
+    /* Footer */
+    footer {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+      padding: 1.5rem 1.25rem;
+    }
+  }
+
+  /* ── RESPONSIVE: SMALL ── */
+  @media (max-width: 480px) {
+    .hero-name { font-size: clamp(2.4rem, 11vw, 3.2rem); }
+    .about-stats { flex-wrap: wrap; gap: 1.5rem; }
+    .skill-card { padding: 1.75rem; }
+    .about-image { height: 360px; }
   }
 </style>
 </head>
@@ -595,7 +781,21 @@
     <li><a href="#work">Work</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE DRAWER -->
+<div class="nav-drawer" id="navDrawer">
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</div>
 
 <!-- HERO -->
 <section id="home">
@@ -613,7 +813,7 @@
     </div>
   </div>
   <div class="hero-image fade-up" style="transition-delay:0.15s">
-    <img src="img/home/hhh.jpg" alt="Jian Hui">
+    <img src="assets/img/hui-1.PNG" alt="Jian Hui">
   </div>
 </section>
 
@@ -633,10 +833,7 @@
             I'm currently a <strong>Software Development Engineer contributing to the open-source Azure CLI as a Microsoft vendor</strong> — migrating Compute &amp; Network modules to the AAZ framework, hardening CLI security, and building AI-powered tooling. This work has sharpened my ability to navigate complex enterprise workflows and high-stakes system design.
         </p>
 
-        <p class="about-body">
-            Beyond core development, I act as a technical lead and strategic bridge — translating intricate business requirements into executable roadmaps. Whether it's engineering Kafka-based messaging at <strong>10k+ msgs/sec</strong>, optimizing RAG-based AI pipelines, or building LLM-driven CRMs, I'm committed to clean architecture, performance, and measurable business impact.
-        </p>
-      <div class="about-stats">
+        <div class="about-stats">
         <div>
           <div class="stat-num">50+</div>
           <div class="stat-label">Projects</div>
@@ -653,7 +850,7 @@
     </div>
     <div class="about-image fade-up" style="transition-delay:0.2s">
       <!-- <div class="about-img-placeholder">JH</div> -->
-      <img src="img/IMG_0109.JPG" alt="Jian Hui">
+      <img src="assets/img/IMG_0109.JPG" alt="Jian Hui">
       <div class="about-tag">
         <strong>Jian Hui</strong>
         Kuala Lumpur, Malaysia
@@ -721,82 +918,19 @@
 <section id="work">
   <p class="section-label fade-up">Selected Work</p>
   <h2 class="work-heading fade-up">Projects I've Built</h2>
-  <div class="work-grid">
-    <a href="https://github.com/Azure/azure-cli" target="_blank" class="work-card fade-up">
-      <div class="work-card-img">
-        <div class="work-img-placeholder">Azure CLI</div>
-      </div>
-      <div class="work-card-info">
-        <h3 class="work-card-title">Azure CLI</h3>
-        <p class="work-card-desc">Open-source contributions as a Microsoft vendor — migrated 30+ Compute commands to AAZ and re-architected <code>az find</code>.</p>
-      </div>
-      <div class="work-card-arrow">↗</div>
-    </a>
-    <a href="https://github.com/jianhui99/" target="_blank" class="work-card fade-up" style="transition-delay:0.08s">
-      <div class="work-card-img">
-        <div class="work-img-placeholder">AI CRM</div>
-      </div>
-      <div class="work-card-info">
-        <h3 class="work-card-title">AI-Powered CRM</h3>
-        <p class="work-card-desc">LLM-driven CRM integrating multi-channel messaging (WhatsApp, Telegram) with secure, high-performance APIs.</p>
-      </div>
-      <div class="work-card-arrow">↗</div>
-    </a>
-    <a href="https://reskills.com/" target="_blank" class="work-card fade-up" style="transition-delay:0.16s">
-      <div class="work-card-img">
-        <img src="img/work/reskills.jpg" alt="Reskills">
-      </div>
-      <div class="work-card-info">
-        <h3 class="work-card-title">Reskills</h3>
-        <p class="work-card-desc">Online learning community platform for discovering and enrolling in courses.</p>
-      </div>
-      <div class="work-card-arrow">↗</div>
-    </a>
-    <a href="https://amaron36.com/" target="_blank" class="work-card fade-up" style="transition-delay:0.08s">
-      <div class="work-card-img">
-        <img src="img/work/amaron36.jpg" alt="Amaron36">
-      </div>
-      <div class="work-card-info">
-        <h3 class="work-card-title">Amaron36</h3>
-        <p class="work-card-desc">Automotive battery e-commerce site backed by 100+ years of Malaysian industry expertise.</p>
-      </div>
-      <div class="work-card-arrow">↗</div>
-    </a>
-    <a href="https://payment.mazars.my/" target="_blank" class="work-card fade-up" style="transition-delay:0.16s">
-      <div class="work-card-img">
-        <img src="img/work/mazars.png" alt="Mazars">
-      </div>
-      <div class="work-card-info">
-        <h3 class="work-card-title">Mazars Payment</h3>
-        <p class="work-card-desc">Payment portal for a global audit & consulting group with 42,000+ professionals worldwide.</p>
-      </div>
-      <div class="work-card-arrow">↗</div>
-    </a>
-    <a href="https://greenbatt.com.my/" target="_blank" class="work-card fade-up" style="transition-delay:0.08s">
-      <div class="work-card-img">
-        <img src="img/work/greenbatt.png" alt="GreenBatt">
-      </div>
-      <div class="work-card-info">
-        <h3 class="work-card-title">GreenBatt</h3>
-        <p class="work-card-desc">Nationwide car battery distribution with in-house QR code warranty program.</p>
-      </div>
-      <div class="work-card-arrow">↗</div>
-    </a>
-    <a href="https://www.classicchair.com.my/" target="_blank" class="work-card fade-up" style="transition-delay:0.16s">
-      <div class="work-card-img">
-        <img src="img/work/classchair-1.png" alt="Classic Chair">
-      </div>
-      <div class="work-card-info">
-        <h3 class="work-card-title">Classic Chair</h3>
-        <p class="work-card-desc">Office furniture brand focused on flexible, structured workplace solutions.</p>
-      </div>
-      <div class="work-card-arrow">↗</div>
-    </a>
+  <div class="work-scroll-hint fade-up">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 8H13M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Swipe to explore
+  </div>
+  <div class="work-grid" id="workGrid">
+    <!-- Populated from works.json -->
   </div>
 </section>
 
 <!-- CONTACT -->
-<section id="contact" style="padding: var(--section-gap) 0; max-width: 100%; margin: 0;">
+<section id="contact">
   <div class="contact-inner">
     <div class="fade-up">
       <p class="section-label contact-label">Contact</p>
@@ -840,16 +974,111 @@
 </footer>
 
 <script>
-  // Scroll-triggered fade
+  // ── Scroll-triggered fade ──
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(el => {
-      if (el.isIntersecting) { el.target.classList.add('visible'); }
+      if (el.isIntersecting) el.target.classList.add('visible');
     });
   }, { threshold: 0.12 });
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-  // Contact form
-  document.getElementById('sendBtn').addEventListener('click', function() {
+  function observeFadeUps() {
+    document.querySelectorAll('.fade-up:not(.observed)').forEach(el => {
+      el.classList.add('observed');
+      observer.observe(el);
+    });
+  }
+  observeFadeUps();
+
+  // ── Load work cards from works.json ──
+  async function loadWorks() {
+    const grid = document.getElementById('workGrid');
+    try {
+      const res = await fetch('./data/works.json');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const works = await res.json();
+
+      const visible = works.filter(w => w.display);
+
+      if (visible.length === 0) {
+        grid.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">No projects to display.</p>';
+        return;
+      }
+
+      grid.innerHTML = visible.map((w, i) => {
+        const delay = (i * 0.08).toFixed(2);
+        return `
+          <a href="${w.url}" target="_blank" rel="noopener" class="work-card fade-up"
+             style="transition-delay:${delay}s" data-id="${w.id}">
+            <div class="work-card-img">
+              <img src="${w.image}" alt="${w.alt}" loading="lazy">
+            </div>
+            <div class="work-card-info">
+              <h3 class="work-card-title">${w.title}</h3>
+              <p class="work-card-desc">${w.description}</p>
+            </div>
+            <div class="work-card-arrow">↗</div>
+          </a>`;
+      }).join('');
+
+      // Re-observe newly injected elements
+      observeFadeUps();
+
+    } catch (err) {
+      console.error('Failed to load works.json:', err);
+      grid.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">Could not load projects. Make sure works.json is in the same directory.</p>';
+    }
+  }
+
+  loadWorks();
+
+  // ── Hamburger / drawer ──
+  const toggle = document.querySelector('.nav-toggle');
+  const drawer = document.getElementById('navDrawer');
+
+  function closeDrawer() {
+    toggle.classList.remove('open');
+    drawer.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  toggle.addEventListener('click', () => {
+    const isOpen = drawer.classList.contains('open');
+    if (isOpen) {
+      closeDrawer();
+    } else {
+      toggle.classList.add('open');
+      drawer.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  drawer.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeDrawer);
+  });
+
+  // ── Active nav link on scroll ──
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a, .nav-drawer a');
+
+  function setActiveLink() {
+    let current = '';
+    sections.forEach(section => {
+      if (window.scrollY >= section.offsetTop - 90) {
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
+    });
+  }
+
+  window.addEventListener('scroll', setActiveLink, { passive: true });
+  setActiveLink();
+
+  // ── Contact form ──
+  document.getElementById('sendBtn').addEventListener('click', function () {
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
     const subject = document.getElementById('subject').value.trim();
@@ -858,7 +1087,7 @@
       alert('Please fill in all fields.');
       return;
     }
-    const body = `Name: ${name}, Email: ${email} | Message: ${message}`;
+    const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
     window.open(`mailto:jianhui9998@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
   });
 </script>
