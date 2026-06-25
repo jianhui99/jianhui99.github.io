@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -346,12 +346,30 @@
   }
 
   .work-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1.25rem;
+    margin: 0 -3rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
   }
 
+  .work-grid::-webkit-scrollbar { height: 6px; }
+  .work-grid::-webkit-scrollbar-track { background: transparent; }
+  .work-grid::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+  .work-grid::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
   .work-card {
+    flex: 0 0 320px;
+    scroll-snap-align: start;
     border: 1px solid var(--border);
     overflow: hidden;
     position: relative;
@@ -412,6 +430,13 @@
     transition: opacity 0.2s;
   }
   .work-card:hover .work-card-arrow { opacity: 1; }
+
+  .work-card-desc code {
+    background: var(--accent-light);
+    padding: 0 0.25rem;
+    border-radius: 2px;
+    font-size: 0.78rem;
+  }
 
   /* ── CONTACT ── */
   #contact {
@@ -550,7 +575,8 @@
     .about-tag { left: 0; }
     .skills-intro { flex-direction: column; align-items: flex-start; }
     .skills-grid { grid-template-columns: 1fr; }
-    .work-grid { grid-template-columns: 1fr; }
+    .work-grid { margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; }
+    .work-card { flex-basis: 78%; }
     .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
     .form-row { grid-template-columns: 1fr; }
     footer { flex-direction: column; gap: 0.5rem; text-align: center; }
@@ -579,7 +605,7 @@
       Jian<br><em>Hui Leong</em>
     </h1>
     <p class="hero-tagline">
-      Crafting robust back-end systems and leading projects with precision — always learning, always building.
+      Building scalable distributed systems, cloud infrastructure, and AI-driven applications — currently contributing to the open-source Azure CLI as a Microsoft vendor.
     </p>
     <div class="hero-btns">
       <a href="#work" class="btn-primary">View My Work</a>
@@ -600,15 +626,15 @@
       <p class="section-label">About Me</p>
       <h2 class="about-heading">Software Engineer.<br>Problem Solver.</h2>
         <p class="about-body">
-            With over 6 years of software engineering expertise, I specialize in architecting high-performance back-end systems and cloud-native solutions. My technical backbone consists of <strong>Golang, Python, and Cloud Infrastructure (Azure/AWS/Aliyun)</strong>, with a proven track record of delivering scalable production environments.
+            With <strong>6+ years</strong> of full-stack software engineering experience, I specialize in architecting high-performance, distributed back-end systems and cloud-native solutions. My technical backbone consists of <strong>Go, Python, C#, and Cloud Infrastructure (Azure / AWS / Alibaba Cloud)</strong>, with a proven track record of driving large-scale, zero-downtime system migrations.
         </p>
 
         <p class="about-body">
-            Currently, I focus on the intersection of <strong>DevOps and AI Engineering</strong>—leveraging CI/CD automation, Docker/Kubernetes orchestration, and advanced Prompt Engineering to build intelligent, resilient applications. My experience as an SDE within the Microsoft ecosystem has refined my ability to navigate complex enterprise workflows and high-stakes system designs.
+            I'm currently a <strong>Software Development Engineer contributing to the open-source Azure CLI as a Microsoft vendor</strong> — migrating Compute &amp; Network modules to the AAZ framework, hardening CLI security, and building AI-powered tooling. This work has sharpened my ability to navigate complex enterprise workflows and high-stakes system design.
         </p>
 
         <p class="about-body">
-            Beyond core development, I act as a technical lead and strategic bridge, translating intricate business requirements into executable technical roadmaps. Whether it's optimizing RAG-based AI pipelines or managing full-lifecycle project delivery, I am committed to engineering excellence and analytical precision.
+            Beyond core development, I act as a technical lead and strategic bridge — translating intricate business requirements into executable roadmaps. Whether it's engineering Kafka-based messaging at <strong>10k+ msgs/sec</strong>, optimizing RAG-based AI pipelines, or building LLM-driven CRMs, I'm committed to clean architecture, performance, and measurable business impact.
         </p>
       <div class="about-stats">
         <div>
@@ -646,33 +672,45 @@
       <h2 class="skills-heading">Technologies I Work With</h2>
     </div>
     <p class="skills-desc">
-      Focused on back-end frameworks and tools that power scalable, production-ready web applications.
+      A full-stack toolkit spanning distributed back-end systems, cloud infrastructure, and AI-driven applications — built for scale and performance.
     </p>
   </div>
   <div class="skills-grid">
     <div class="skill-card fade-up">
       <div class="skill-number">01</div>
-      <h3 class="skill-name">Laravel</h3>
-      <p class="skill-desc">A free, open-source PHP framework following the MVC pattern — my primary tool for building structured, maintainable web applications.</p>
-      <a href="https://laravel.com/docs/8.x/readme" target="_blank" class="skill-link">Documentation →</a>
+      <h3 class="skill-name">Languages</h3>
+      <p class="skill-desc">Go, Python, C#, TypeScript, JavaScript &amp; PHP — my core toolset for building everything from high-throughput services to developer tooling.</p>
+      <a href="https://go.dev/doc/" target="_blank" class="skill-link">Documentation →</a>
     </div>
     <div class="skill-card fade-up" style="transition-delay:0.1s">
       <div class="skill-number">02</div>
-      <h3 class="skill-name">Laravel RESTful API</h3>
-      <p class="skill-desc">Building clean, resource-based APIs for mobile applications — conforming to REST architectural constraints for seamless client-server interaction.</p>
-      <a href="https://laravel.com/docs/8.x/eloquent-resources" target="_blank" class="skill-link">Documentation →</a>
+      <h3 class="skill-name">Frontend &amp; Mobile</h3>
+      <p class="skill-desc">React, Next.js, Vue &amp; React Native — delivering responsive web apps and cross-platform mobile experiences (iOS, Android, HarmonyOS).</p>
+      <a href="https://react.dev/" target="_blank" class="skill-link">Documentation →</a>
     </div>
     <div class="skill-card fade-up" style="transition-delay:0.15s">
       <div class="skill-number">03</div>
-      <h3 class="skill-name">Laravel Admin</h3>
-      <p class="skill-desc">An administrative interface builder that lets me deliver full-featured CRUD backends quickly — ideal for rapid project delivery.</p>
-      <a href="https://laravel-admin.org/docs/zh/1.x" target="_blank" class="skill-link">Documentation →</a>
+      <h3 class="skill-name">Backend &amp; Systems</h3>
+      <p class="skill-desc">Node.js, .NET, REST, gRPC, WebSocket &amp; Kafka — architecting distributed, event-driven systems that handle 10k+ messages/sec.</p>
+      <a href="https://kafka.apache.org/documentation/" target="_blank" class="skill-link">Documentation →</a>
     </div>
     <div class="skill-card fade-up" style="transition-delay:0.2s">
       <div class="skill-number">04</div>
-      <h3 class="skill-name">OpenCart</h3>
-      <p class="skill-desc">PHP-based e-commerce platform using MySQL and HTML — used for building and customising online store management systems.</p>
-      <a href="https://www.opencart.com/" target="_blank" class="skill-link">Website →</a>
+      <h3 class="skill-name">Cloud &amp; DevOps</h3>
+      <p class="skill-desc">Azure, AWS, Alibaba Cloud, Docker, Terraform, CI/CD &amp; Git — driving large-scale, zero-downtime cloud migrations and automation.</p>
+      <a href="https://learn.microsoft.com/en-us/cli/azure/" target="_blank" class="skill-link">Documentation →</a>
+    </div>
+    <div class="skill-card fade-up" style="transition-delay:0.25s">
+      <div class="skill-number">05</div>
+      <h3 class="skill-name">Database &amp; Caching</h3>
+      <p class="skill-desc">PostgreSQL, MySQL, MongoDB &amp; Redis — designing performant data layers and caching strategies for low-latency applications.</p>
+      <a href="https://www.postgresql.org/docs/" target="_blank" class="skill-link">Documentation →</a>
+    </div>
+    <div class="skill-card fade-up" style="transition-delay:0.3s">
+      <div class="skill-number">06</div>
+      <h3 class="skill-name">AI &amp; Integrations</h3>
+      <p class="skill-desc">LLM &amp; AI Agents with multi-channel messaging (WhatsApp, Telegram) — building intelligent, RAG-based pipelines and AI-powered platforms.</p>
+      <a href="https://platform.openai.com/docs/" target="_blank" class="skill-link">Documentation →</a>
     </div>
   </div>
 </section>
@@ -684,7 +722,27 @@
   <p class="section-label fade-up">Selected Work</p>
   <h2 class="work-heading fade-up">Projects I've Built</h2>
   <div class="work-grid">
-    <a href="https://reskills.com/" target="_blank" class="work-card fade-up">
+    <a href="https://github.com/Azure/azure-cli" target="_blank" class="work-card fade-up">
+      <div class="work-card-img">
+        <div class="work-img-placeholder">Azure CLI</div>
+      </div>
+      <div class="work-card-info">
+        <h3 class="work-card-title">Azure CLI</h3>
+        <p class="work-card-desc">Open-source contributions as a Microsoft vendor — migrated 30+ Compute commands to AAZ and re-architected <code>az find</code>.</p>
+      </div>
+      <div class="work-card-arrow">↗</div>
+    </a>
+    <a href="https://github.com/jianhui99/" target="_blank" class="work-card fade-up" style="transition-delay:0.08s">
+      <div class="work-card-img">
+        <div class="work-img-placeholder">AI CRM</div>
+      </div>
+      <div class="work-card-info">
+        <h3 class="work-card-title">AI-Powered CRM</h3>
+        <p class="work-card-desc">LLM-driven CRM integrating multi-channel messaging (WhatsApp, Telegram) with secure, high-performance APIs.</p>
+      </div>
+      <div class="work-card-arrow">↗</div>
+    </a>
+    <a href="https://reskills.com/" target="_blank" class="work-card fade-up" style="transition-delay:0.16s">
       <div class="work-card-img">
         <img src="img/work/reskills.jpg" alt="Reskills">
       </div>
