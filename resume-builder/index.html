@@ -130,12 +130,39 @@
   .item-card {
     border: 1px solid var(--ui-border);
     border-radius: 6px;
-    padding: 10px 11px;
+    padding: 0;
     margin-bottom: 10px;
     background: #fff;
   }
-  .item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .item-head .item-label { font-size: 11.5px; font-weight: 700; color: var(--ui-accent); }
+  .item-head { display: flex; align-items: center; gap: 6px; padding: 9px 11px; }
+  .item-head .item-label { font-size: 11.5px; font-weight: 700; color: var(--ui-accent); white-space: nowrap; }
+  .item-body { padding: 2px 11px 11px; }
+  summary.item-head { cursor: pointer; list-style: none; user-select: none; }
+  summary.item-head::-webkit-details-marker { display: none; }
+  summary.item-head::after { content: "▾"; font-size: 10px; color: var(--ui-muted); flex: none; }
+  details.item-card[open] > summary.item-head::after { content: "▴"; }
+  .item-sublabel {
+    font-size: 11px;
+    color: var(--ui-muted);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .item-sublabel:not(:empty)::before { content: "· "; }
+  .item-actions { margin-left: auto; display: flex; gap: 4px; flex: none; }
+  .drag-handle {
+    cursor: grab;
+    color: var(--ui-muted);
+    font-size: 10px;
+    letter-spacing: 1px;
+    user-select: none;
+    flex: none;
+  }
+  .item-card.dragging { opacity: 0.5; }
+  .item-card.drop-above { box-shadow: 0 -2px 0 0 var(--ui-accent); }
+  .item-card.drop-below { box-shadow: 0 2px 0 0 var(--ui-accent); }
   .mini-btn {
     border: 1px solid var(--ui-border);
     background: #fff;
@@ -146,6 +173,9 @@
     cursor: pointer;
   }
   .mini-btn:hover { color: #b3261e; border-color: #b3261e; }
+  .mini-btn.move { padding: 3px 6px; }
+  .mini-btn.move:hover { color: var(--ui-accent); border-color: var(--ui-accent); }
+  .mini-btn:disabled { opacity: 0.4; cursor: default; pointer-events: none; }
   .add-btn {
     border: 1px dashed var(--ui-accent);
     background: #fff;
@@ -474,7 +504,7 @@ function defaultData() {
         company: "ACME CORP.",
         role: "Senior Full-Stack Developer",
         startDate: "Jan 2022",
-        endDate: "Present",
+        endDate: "",
         desc: "Lead developer on a customer-facing SaaS platform serving **50k+ users**.",
         current: true,
         acc: [
@@ -528,6 +558,8 @@ function migrate(d) {
     if (j.startDate === undefined) j.startDate = "";
     if (j.endDate === undefined) j.endDate = "";
     delete j.meta;
+    // A literal "Present" end date predates the current-role checkbox
+    if (/^\s*present\s*$/i.test(j.endDate)) { j.current = true; j.endDate = ""; }
   });
   (d.education || []).forEach(e => {
     if (e.startDate === undefined) e.startDate = "";
@@ -554,6 +586,47 @@ function esc(s) {
 // Escape, then convert **bold** markers into <strong>
 function fmt(s) {
   return esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
+/* ---------------- Job duration ---------------- */
+const MONTH_INDEX = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+
+// Parse free-text dates like "Jan 2024", "January 2024", "2024-01", "01/2024"
+// into { y, m }; returns null when the format is unrecognised.
+function parseMonth(s) {
+  s = String(s == null ? "" : s).trim();
+  let m = s.match(/^([A-Za-z]{3,9})\.?,?\s+(\d{4})$/);
+  if (m) {
+    const mo = MONTH_INDEX[m[1].slice(0, 3).toLowerCase()];
+    return mo ? { y: +m[2], m: mo } : null;
+  }
+  m = s.match(/^(\d{4})[-\/.](\d{1,2})$/);
+  if (m && +m[2] >= 1 && +m[2] <= 12) return { y: +m[1], m: +m[2] };
+  m = s.match(/^(\d{1,2})[\/.](\d{4})$/);
+  if (m && +m[1] >= 1 && +m[1] <= 12) return { y: +m[2], m: +m[1] };
+  return null;
+}
+
+// "2 years 6 months" between two free-text dates, counting both end months
+// (LinkedIn-style). Empty string when either date can't be parsed.
+function durationStr(startStr, endStr, isCurrent) {
+  const s = parseMonth(startStr);
+  if (!s) return "";
+  let e;
+  if (isCurrent || /^\s*(present|now|current)\s*$/i.test(String(endStr == null ? "" : endStr))) {
+    const now = new Date();
+    e = { y: now.getFullYear(), m: now.getMonth() + 1 };
+  } else {
+    e = parseMonth(endStr);
+  }
+  if (!e) return "";
+  const months = (e.y - s.y) * 12 + (e.m - s.m) + 1;
+  if (months <= 0) return "";
+  const y = Math.floor(months / 12), mo = months % 12;
+  const parts = [];
+  if (y) parts.push(y + (y === 1 ? " year" : " years"));
+  if (mo) parts.push(mo + (mo === 1 ? " month" : " months"));
+  return parts.join(" ");
 }
 
 /* ---------------- Render preview ---------------- */
@@ -621,7 +694,10 @@ function render() {
     const accHtml = (j.acc || []).filter(Boolean).length
       ? '<ul class="acc">' + j.acc.filter(Boolean).map(a => '<li>' + fmt(a) + '</li>').join("") + '</ul>'
       : '';
-    const dateStr = [j.startDate, j.endDate].filter(Boolean).join(" – ");
+    const end = j.current ? "Present" : j.endDate;
+    let dateStr = [j.startDate, end].filter(Boolean).join(" – ");
+    const dur = durationStr(j.startDate, j.endDate, j.current);
+    if (dateStr && dur) dateStr += " (" + dur + ")";
     const metaInner = [esc(j.role), esc(dateStr)].filter(Boolean).join(" &nbsp;|&nbsp; ");
     const metaHtml = metaInner ? '<div class="job-meta">' + metaInner + '</div>' : '';
     const descHtml = j.desc ? '<div class="job-desc">' + fmt(j.desc) + '</div>' : '';
@@ -767,32 +843,148 @@ function makeSelect(labelText, value, options, onchange) {
   return wrap;
 }
 
-function itemCard(label, onRemove) {
-  const card = document.createElement("div");
+// Shared drag state for card reordering (only one drag can happen at a time).
+let cardDrag = null;
+
+// Buttons inside a <summary> must not toggle the <details> they live in.
+function headBtn(text, title, onClick) {
+  const b = document.createElement("button");
+  b.className = "mini-btn";
+  b.type = "button";
+  b.textContent = text;
+  if (title) b.title = title;
+  b.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); onClick(); });
+  return b;
+}
+
+// Collapsible, reorderable list-entry card shared by all editor sections.
+// opts: {
+//   collapsible: false to render a plain always-open card (default true),
+//   obj: data object carrying the persisted _open flag,
+//   sublabel: initial muted text shown next to the label,
+//   reorder: { arr, index, rerender } enables drag handle + move buttons
+// }
+// Returns { root, body, sublabel } — append fields to body, update
+// sublabel.textContent from input handlers to keep the header live.
+function itemCard(label, onRemove, opts) {
+  opts = opts || {};
+  const collapsible = opts.collapsible !== false;
+  const card = document.createElement(collapsible ? "details" : "div");
   card.className = "item-card";
-  const head = document.createElement("div");
+  const head = document.createElement(collapsible ? "summary" : "div");
   head.className = "item-head";
+
   const lab = document.createElement("span");
   lab.className = "item-label";
   lab.textContent = label;
-  const del = document.createElement("button");
-  del.className = "mini-btn";
-  del.type = "button";
-  del.textContent = "✕ Remove";
-  del.addEventListener("click", onRemove);
-  head.appendChild(lab); head.appendChild(del);
+  const sub = document.createElement("span");
+  sub.className = "item-sublabel";
+  sub.textContent = opts.sublabel || "";
+  const actions = document.createElement("span");
+  actions.className = "item-actions";
+
+  const r = opts.reorder;
+  if (r) {
+    const handle = document.createElement("span");
+    handle.className = "drag-handle";
+    handle.textContent = "⋮⋮";
+    handle.title = "Drag to reorder";
+    handle.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); });
+    // Only the handle arms dragging, so text selection in fields keeps working.
+    handle.addEventListener("mousedown", () => { card.draggable = true; });
+    handle.addEventListener("mouseup", () => { card.draggable = false; });
+    head.appendChild(handle);
+
+    const moveTo = to => {
+      const item = r.arr.splice(r.index, 1)[0];
+      r.arr.splice(to, 0, item);
+      r.rerender(); render();
+    };
+    const up = headBtn("▲", "Move up", () => moveTo(r.index - 1));
+    const down = headBtn("▼", "Move down", () => moveTo(r.index + 1));
+    up.classList.add("move"); down.classList.add("move");
+    up.disabled = r.index === 0;
+    down.disabled = r.index === r.arr.length - 1;
+    actions.appendChild(up); actions.appendChild(down);
+
+    card.addEventListener("dragstart", e => {
+      cardDrag = { arr: r.arr, from: r.index };
+      card.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      try { e.dataTransfer.setData("text/plain", ""); } catch (err) {}
+    });
+    card.addEventListener("dragend", () => {
+      card.draggable = false;
+      card.classList.remove("dragging");
+      cardDrag = null;
+      if (card.parentNode) {
+        card.parentNode.querySelectorAll(".drop-above, .drop-below")
+          .forEach(el => el.classList.remove("drop-above", "drop-below"));
+      }
+    });
+    card.addEventListener("dragover", e => {
+      if (!cardDrag || cardDrag.arr !== r.arr) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      const rect = card.getBoundingClientRect();
+      const before = e.clientY < rect.top + rect.height / 2;
+      card.classList.toggle("drop-above", before);
+      card.classList.toggle("drop-below", !before);
+    });
+    card.addEventListener("dragleave", () => {
+      card.classList.remove("drop-above", "drop-below");
+    });
+    card.addEventListener("drop", e => {
+      if (!cardDrag || cardDrag.arr !== r.arr) return;
+      e.preventDefault();
+      const rect = card.getBoundingClientRect();
+      const before = e.clientY < rect.top + rect.height / 2;
+      const from = cardDrag.from;
+      let to = r.index + (before ? 0 : 1);
+      if (to > from) to--;
+      cardDrag = null;
+      if (to !== from) {
+        const item = r.arr.splice(from, 1)[0];
+        r.arr.splice(to, 0, item);
+      }
+      r.rerender(); render();
+    });
+  }
+
+  const del = headBtn("✕ Remove", "", () => {
+    const what = lab.textContent + (sub.textContent ? " · " + sub.textContent : "");
+    if (confirm('Remove "' + what + '"?')) onRemove();
+  });
+  actions.appendChild(del);
+
+  head.appendChild(lab);
+  head.appendChild(sub);
+  head.appendChild(actions);
   card.appendChild(head);
-  return card;
+
+  const body = document.createElement("div");
+  body.className = "item-body";
+  card.appendChild(body);
+
+  if (collapsible) {
+    card.open = !opts.obj || opts.obj._open !== false;
+    if (opts.obj) {
+      card.addEventListener("toggle", () => { opts.obj._open = card.open; save(); });
+    }
+  }
+
+  return { root: card, body: body, sublabel: sub };
 }
 
 function renderSkills() {
   const list = $("skillsList");
   list.innerHTML = "";
   data.skills.forEach((s, i) => {
-    const card = itemCard("Skill Group " + (i + 1), () => { data.skills.splice(i, 1); renderSkills(); render(); });
-    card.appendChild(makeField("Label", s.label, v => s.label = v, { placeholder: "Languages" }));
-    card.appendChild(makeField("Skills", s.value, v => s.value = v, { textarea: true, rows: 2, placeholder: "Go, Python, ..." }));
-    list.appendChild(card);
+    const card = itemCard("Skill Group " + (i + 1), () => { data.skills.splice(i, 1); renderSkills(); render(); },
+      { obj: s, sublabel: s.label, reorder: { arr: data.skills, index: i, rerender: renderSkills } });
+    card.body.appendChild(makeField("Label", s.label, v => { s.label = v; card.sublabel.textContent = v; }, { placeholder: "Languages" }));
+    card.body.appendChild(makeField("Skills", s.value, v => s.value = v, { textarea: true, rows: 2, placeholder: "Go, Python, ..." }));
+    list.appendChild(card.root);
   });
 }
 
@@ -800,9 +992,10 @@ function renderAch() {
   const list = $("achList");
   list.innerHTML = "";
   data.achievements.forEach((a, i) => {
-    const card = itemCard("Achievement " + (i + 1), () => { data.achievements.splice(i, 1); renderAch(); render(); });
-    card.appendChild(makeField("Text", a, v => data.achievements[i] = v, { textarea: true, rows: 2, placeholder: "Best Employee of the year — Company" }));
-    list.appendChild(card);
+    const card = itemCard("Achievement " + (i + 1), () => { data.achievements.splice(i, 1); renderAch(); render(); },
+      { collapsible: false, reorder: { arr: data.achievements, index: i, rerender: renderAch } });
+    card.body.appendChild(makeField("Text", a, v => data.achievements[i] = v, { textarea: true, rows: 2, placeholder: "Best Employee of the year — Company" }));
+    list.appendChild(card.root);
   });
 }
 
@@ -810,15 +1003,16 @@ function renderEdu() {
   const list = $("eduList");
   list.innerHTML = "";
   data.education.forEach((e, i) => {
-    const card = itemCard("Education " + (i + 1), () => { data.education.splice(i, 1); renderEdu(); render(); });
-    card.appendChild(makeField("School / Institution", e.school, v => e.school = v, { placeholder: "University Name" }));
-    card.appendChild(makeField("Degree / Programme", e.degree, v => e.degree = v, { placeholder: "Degree / Programme" }));
+    const card = itemCard("Education " + (i + 1), () => { data.education.splice(i, 1); renderEdu(); render(); },
+      { obj: e, sublabel: e.school, reorder: { arr: data.education, index: i, rerender: renderEdu } });
+    card.body.appendChild(makeField("School / Institution", e.school, v => { e.school = v; card.sublabel.textContent = v; }, { placeholder: "University Name" }));
+    card.body.appendChild(makeField("Degree / Programme", e.degree, v => e.degree = v, { placeholder: "Degree / Programme" }));
     const drow = document.createElement("div");
     drow.className = "row2";
     drow.appendChild(makeField("Start Date", e.startDate, v => e.startDate = v, { placeholder: "2018" }));
     drow.appendChild(makeField("End Date", e.endDate, v => e.endDate = v, { placeholder: "2022" }));
-    card.appendChild(drow);
-    list.appendChild(card);
+    card.body.appendChild(drow);
+    list.appendChild(card.root);
   });
 }
 
@@ -829,31 +1023,37 @@ function renderLang() {
   list.innerHTML = "";
   data.languages.forEach((l, i) => {
     if (!l.level) l.level = "Fluent";
-    const card = itemCard("Language " + (i + 1), () => { data.languages.splice(i, 1); renderLang(); render(); });
+    const card = itemCard("Language " + (i + 1), () => { data.languages.splice(i, 1); renderLang(); render(); },
+      { obj: l, sublabel: l.name, reorder: { arr: data.languages, index: i, rerender: renderLang } });
     const row = document.createElement("div");
     row.className = "row2";
-    row.appendChild(makeField("Language", l.name, v => l.name = v, { placeholder: "English" }));
+    row.appendChild(makeField("Language", l.name, v => { l.name = v; card.sublabel.textContent = v; }, { placeholder: "English" }));
     row.appendChild(makeSelect("Level", l.level, LANG_LEVELS, v => l.level = v));
-    card.appendChild(row);
-    list.appendChild(card);
+    card.body.appendChild(row);
+    list.appendChild(card.root);
   });
 }
 
 function renderJobs() {
   const list = $("jobList");
   list.innerHTML = "";
+  const jobSub = j => [j.company, j.role].filter(Boolean).join(" - ");
   data.jobs.forEach((j, i) => {
-    const card = itemCard("Experience " + (i + 1), () => { data.jobs.splice(i, 1); renderJobs(); render(); });
-    card.appendChild(makeField("Company", j.company, v => j.company = v, { placeholder: "COMPANY NAME" }));
-    card.appendChild(makeField("Role / Title", j.role, v => j.role = v, { placeholder: "Software Engineer" }));
+    const card = itemCard("Experience " + (i + 1), () => { data.jobs.splice(i, 1); renderJobs(); render(); },
+      { obj: j, sublabel: jobSub(j), reorder: { arr: data.jobs, index: i, rerender: renderJobs } });
+    card.body.appendChild(makeField("Company", j.company, v => { j.company = v; card.sublabel.textContent = jobSub(j); }, { placeholder: "COMPANY NAME" }));
+    card.body.appendChild(makeField("Role / Title", j.role, v => { j.role = v; card.sublabel.textContent = jobSub(j); }, { placeholder: "Software Engineer" }));
     const jdrow = document.createElement("div");
     jdrow.className = "row2";
     jdrow.appendChild(makeField("Start Date", j.startDate, v => j.startDate = v, { placeholder: "Jan 2024" }));
-    jdrow.appendChild(makeField("End Date", j.endDate, v => j.endDate = v, { placeholder: "Present" }));
-    card.appendChild(jdrow);
-    card.appendChild(makeField("Description", j.desc, v => j.desc = v, { textarea: true, rows: 2, placeholder: "Short role description" }));
+    const endField = makeField("End Date", j.endDate, v => j.endDate = v, { placeholder: "Present" });
+    const endInput = endField.querySelector("input");
+    if (j.current) { endInput.disabled = true; endInput.value = "Present"; }
+    jdrow.appendChild(endField);
+    card.body.appendChild(jdrow);
+    card.body.appendChild(makeField("Description", j.desc, v => j.desc = v, { textarea: true, rows: 2, placeholder: "Short role description" }));
 
-    // current toggle
+    // current toggle: shows "Present" as the end date and highlights the role
     const togWrap = document.createElement("div");
     togWrap.className = "field";
     const tl = document.createElement("label");
@@ -861,17 +1061,17 @@ function renderJobs() {
     const chk = document.createElement("input");
     chk.type = "checkbox"; chk.checked = !!j.current;
     chk.style.width = "auto";
-    chk.addEventListener("change", () => { j.current = chk.checked; render(); });
+    chk.addEventListener("change", () => { j.current = chk.checked; renderJobs(); render(); });
     tl.appendChild(chk);
-    tl.appendChild(document.createTextNode("Highlight as current role"));
+    tl.appendChild(document.createTextNode("I currently work here"));
     togWrap.appendChild(tl);
-    card.appendChild(togWrap);
+    card.body.appendChild(togWrap);
 
     // accomplishments
     const accLabel = document.createElement("div");
     accLabel.className = "field";
     accLabel.innerHTML = '<label>Accomplishments</label>';
-    card.appendChild(accLabel);
+    card.body.appendChild(accLabel);
     j.acc = j.acc || [];
     j.acc.forEach((a, ai) => {
       const arow = document.createElement("div");
@@ -886,14 +1086,14 @@ function renderJobs() {
       rm.className = "mini-btn"; rm.type = "button"; rm.textContent = "✕";
       rm.addEventListener("click", () => { j.acc.splice(ai, 1); renderJobs(); render(); });
       arow.appendChild(inp); arow.appendChild(rm);
-      card.appendChild(arow);
+      card.body.appendChild(arow);
     });
     const addAcc = document.createElement("button");
     addAcc.className = "mini-btn"; addAcc.type = "button"; addAcc.textContent = "+ Add accomplishment";
     addAcc.addEventListener("click", () => { j.acc.push(""); renderJobs(); render(); });
-    card.appendChild(addAcc);
+    card.body.appendChild(addAcc);
 
-    list.appendChild(card);
+    list.appendChild(card.root);
   });
 }
 
