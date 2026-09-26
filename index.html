@@ -17,7 +17,6 @@
       --white: #ffffff;
       --ink: #10212b;
       --muted: #586971;
-      --mist: #dde7e8;
       --line: rgba(16, 33, 43, 0.16);
       --display: "Instrument Serif", Georgia, serif;
       --sans: "Manrope", Arial, sans-serif;
@@ -102,15 +101,14 @@
     }
 
     .brand-mark {
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+      border: 2px solid rgba(255, 255, 255, 0.82);
       border-radius: 50%;
-      color: #fff;
-      font-size: 0.7rem;
-      letter-spacing: -0.08em;
+      object-fit: cover;
+      object-position: 54% 25%;
+      box-shadow: 0 0 0 3px rgba(243, 107, 58, 0.28);
     }
 
     .nav-links {
@@ -535,15 +533,42 @@
     }
 
     .work-layout {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 24px;
-      align-items: start;
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 18px;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 1px;
+      overscroll-behavior-inline: contain;
+      scrollbar-color: var(--blueprint) #dde7e8;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .work-layout::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .work-layout::-webkit-scrollbar-track {
+      background: #dde7e8;
+    }
+
+    .work-layout::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: var(--blueprint);
+    }
+
+    .work-scroll-note {
+      margin: -34px 0 22px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-align: right;
     }
 
     .project {
       position: relative;
-      min-height: 420px;
+      flex: 0 0 clamp(340px, 38vw, 460px);
+      height: 460px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -552,11 +577,7 @@
       color: var(--white);
       text-decoration: none;
       isolation: isolate;
-    }
-
-    .project:first-child {
-      min-height: 620px;
-      grid-row: span 2;
+      scroll-snap-align: start;
     }
 
     .project-media {
@@ -636,102 +657,10 @@
       height: 17px;
     }
 
-    .project:nth-child(n + 4) {
-      min-height: 330px;
-    }
-
     .work-empty {
       padding: 28px;
       border: 1px solid var(--line);
       color: var(--muted);
-    }
-
-    .profile {
-      background: var(--mist);
-    }
-
-    .profile-grid {
-      display: grid;
-      grid-template-columns: minmax(280px, 0.72fr) 1.28fr;
-      gap: clamp(50px, 9vw, 120px);
-      align-items: center;
-    }
-
-    .portrait {
-      position: relative;
-      aspect-ratio: 4 / 5;
-      overflow: hidden;
-      background: var(--blueprint);
-    }
-
-    .portrait img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-    }
-
-    .portrait-caption {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: min(88%, 330px);
-      padding: 18px 22px;
-      background: var(--blueprint);
-      color: var(--white);
-      font-size: 0.8rem;
-    }
-
-    .portrait-caption strong {
-      display: block;
-      font-size: 0.95rem;
-    }
-
-    .profile-copy h2 {
-      max-width: 680px;
-      margin-bottom: 26px;
-      font-family: var(--display);
-      font-size: clamp(3rem, 5.4vw, 5.6rem);
-      font-weight: 400;
-      letter-spacing: -0.045em;
-      line-height: 0.96;
-    }
-
-    .profile-copy > p {
-      max-width: 650px;
-      color: #465b64;
-    }
-
-    .recognition {
-      display: grid;
-      grid-template-columns: 72px 1fr;
-      gap: 20px;
-      align-items: center;
-      margin-top: 36px;
-      padding-top: 28px;
-      border-top: 1px solid rgba(16, 33, 43, 0.18);
-    }
-
-    .recognition-badge {
-      width: 72px;
-      height: 72px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--signal);
-      color: #2b180f;
-      font-family: var(--display);
-      font-size: 2rem;
-    }
-
-    .recognition strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .recognition span {
-      color: #52646c;
-      font-size: 0.82rem;
     }
 
     .process {
@@ -931,21 +860,6 @@
         border-left: 0;
       }
 
-      .work-layout {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .project:first-child {
-        grid-column: 1 / -1;
-        grid-row: auto;
-        min-height: 520px;
-      }
-
-      .profile-grid {
-        grid-template-columns: minmax(250px, 0.7fr) 1.3fr;
-        gap: 54px;
-      }
-
       .process-list {
         grid-template-columns: 1fr 1fr;
       }
@@ -1078,23 +992,13 @@
         gap: 20px;
       }
 
-      .work-layout {
-        grid-template-columns: 1fr;
+      .project {
+        flex-basis: min(82vw, 380px);
+        height: 430px;
       }
 
-      .project,
-      .project:first-child,
-      .project:nth-child(n + 4) {
-        min-height: 430px;
-      }
-
-      .profile-grid,
       .contact-grid {
         grid-template-columns: 1fr;
-      }
-
-      .portrait {
-        width: min(100%, 430px);
       }
 
       .contact-form {
@@ -1130,6 +1034,11 @@
 
       .project-copy {
         padding: 24px;
+      }
+
+      .work-scroll-note {
+        margin-top: -26px;
+        text-align: left;
       }
 
       .process-list {
@@ -1171,7 +1080,7 @@
   <header class="site-header">
     <nav class="nav shell" aria-label="Main navigation">
       <a class="brand" href="#home" aria-label="Jian Hui, home">
-        <span class="brand-mark" aria-hidden="true">JH</span>
+        <img class="brand-mark" src="assets/img/hui-1.PNG" alt="">
         Jian Hui
       </a>
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open navigation">
@@ -1179,8 +1088,8 @@
       </button>
       <ul class="nav-links" id="navLinks">
         <li><a href="#services">What I build</a></li>
+        <li><a href="#process">How we work</a></li>
         <li><a href="#work">Selected work</a></li>
-        <li><a href="#about">About</a></li>
         <li><a class="nav-cta" href="#contact">Discuss a project</a></li>
       </ul>
     </nav>
@@ -1309,45 +1218,6 @@
       </div>
     </section>
 
-    <section class="section work" id="work">
-      <div class="shell">
-        <header class="section-heading reveal">
-          <p class="section-kicker">Selected work</p>
-          <div>
-            <h2>Products across public cloud, business operations, and consumer platforms.</h2>
-            <p>Different industries, one consistent responsibility: understand the system, make the right trade-offs, and deliver something people can use.</p>
-          </div>
-        </header>
-        <div class="work-layout" id="workGrid" aria-live="polite">
-          <p class="work-empty">Loading selected projects…</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section profile" id="about">
-      <div class="profile-grid shell">
-        <figure class="portrait reveal">
-          <img src="assets/img/IMG_0109.JPG" alt="Jian Hui Leong" loading="lazy">
-          <figcaption class="portrait-caption">
-            <strong>Jian Hui Leong</strong>
-            Software engineer based in Kuala Lumpur
-          </figcaption>
-        </figure>
-        <div class="profile-copy reveal">
-          <h2>Senior engineering thinking, direct collaboration.</h2>
-          <p>I have spent more than six years building full-stack products and distributed systems with Go, Python, C#, JavaScript, and cloud infrastructure. Today, I contribute to the open-source Azure CLI as a Microsoft vendor—migrating major command groups, improving security, and developing AI-assisted tooling.</p>
-          <p>Clients work directly with the person making the technical decisions. That means clearer communication, fewer translation gaps, and a system built with the whole lifecycle in view.</p>
-          <div class="recognition">
-            <div class="recognition-badge" aria-hidden="true">JH</div>
-            <div>
-              <strong>Best Employee, June 2024</strong>
-              <span>Recognized by Redfin Technologies for high-impact frontend and backend delivery.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <section class="section process" id="process">
       <div class="shell">
         <header class="section-heading reveal">
@@ -1407,6 +1277,22 @@
       </div>
     </section>
 
+    <section class="section work" id="work">
+      <div class="shell">
+        <header class="section-heading reveal">
+          <p class="section-kicker">Selected work</p>
+          <div>
+            <h2>Products across public cloud, business operations, and consumer platforms.</h2>
+            <p>Different industries, one consistent responsibility: understand the system, make the right trade-offs, and deliver something people can use.</p>
+          </div>
+        </header>
+        <p class="work-scroll-note">Drag or swipe sideways to explore every project.</p>
+        <div class="work-layout" id="workGrid" aria-live="polite">
+          <p class="work-empty">Loading selected projects…</p>
+        </div>
+      </div>
+    </section>
+
     <section class="contact" id="contact">
       <div class="contact-grid shell">
         <div>
@@ -1422,8 +1308,8 @@
               <strong>Kuala Lumpur, Malaysia</strong>
             </div>
             <div>
-              <span>Code</span>
-              <a href="https://github.com/jianhui99/" target="_blank" rel="noopener noreferrer">github.com/jianhui99</a>
+              <span>WhatsApp</span>
+              <a href="https://wa.me/60167649725" target="_blank" rel="noopener noreferrer">+60 16-764 9725</a>
             </div>
           </div>
         </div>
