@@ -711,37 +711,150 @@
     }
 
     .process-list {
+      --process-icon-size: 64px;
+      --process-step-gap: 28px;
+      --process-phase-gap: 44px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      border: 1px solid var(--line);
-      background: var(--line);
+      gap: var(--process-phase-gap);
+    }
+
+    .process-phase,
+    .process-step-copy {
+      min-width: 0;
+    }
+
+    .process-phase-heading {
+      display: flex;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .process-phase-title {
+      margin: 0;
+      color: var(--blueprint);
+      font-family: var(--display);
+      font-size: clamp(1.75rem, 2.3vw, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .process-phase-link {
+      display: none;
+      flex: 1 0 24px;
+      width: 24px;
+      height: 16px;
+      fill: none;
+      stroke: var(--blueprint);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .process-steps {
+      display: grid;
+      gap: var(--process-step-gap);
+      margin: 0;
+      padding: 0;
+      list-style: none;
     }
 
     .process-step {
-      min-height: 240px;
+      position: relative;
+      display: grid;
+      grid-template-columns: var(--process-icon-size) minmax(0, 1fr);
+      align-items: start;
+      align-content: start;
+      gap: 16px;
+    }
+
+    .process-step:not(:last-child)::before,
+    .process-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .process-step:not(:last-child)::after {
+      inset-block-start: calc(var(--process-icon-size) + 8px);
+      inset-block-end: calc(12px - var(--process-step-gap));
+      inset-inline-start: calc(var(--process-icon-size) / 2);
+      border-inline-start: 1.5px solid var(--blueprint);
+    }
+
+    .process-step:not(:last-child)::before {
+      inset-block-end: calc(12px - var(--process-step-gap));
+      inset-inline-start: calc(var(--process-icon-size) / 2 - 3px);
+      width: 6px;
+      height: 6px;
+      border-inline-end: 1.5px solid var(--blueprint);
+      border-block-end: 1.5px solid var(--blueprint);
+      transform: rotate(45deg);
+    }
+
+    .process-illustration {
+      display: block;
+      width: var(--process-icon-size);
+      height: var(--process-icon-size);
+      fill: none;
+      stroke: var(--blueprint);
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .process-illustration-paper {
+      fill: var(--white);
+    }
+
+    .process-illustration-accent {
+      fill: var(--signal);
+    }
+
+    .process-illustration-dot {
+      fill: var(--blueprint);
+      stroke: none;
+    }
+
+    .process-step-copy {
+      padding-block-start: 5px;
+    }
+
+    .process-step-heading {
       display: flex;
-      flex-direction: column;
-      padding: 28px;
-      background: var(--paper);
+      align-items: center;
+      gap: 8px;
     }
 
-    .step-number {
-      margin-bottom: auto;
-      color: var(--signal);
-      font-family: var(--display);
-      font-size: 2rem;
+    .process-step .step-number {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      background: var(--signal);
+      color: var(--ink);
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
     }
 
-    .process-step h3 {
-      margin-bottom: 10px;
-      font-size: 1.05rem;
+    .process-step-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
     }
 
     .process-step p {
-      margin-bottom: 0;
+      margin: 6px 0 0;
       color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.875rem;
+      line-height: 1.6;
     }
 
     .contact {
@@ -885,6 +998,59 @@
       }
     }
 
+    @media (min-width: 981px) {
+      .process-list {
+        --process-icon-size: 80px;
+        --process-step-gap: 36px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .process-phase:not(:last-child) .process-phase-heading {
+        margin-inline-end: calc(-1 * var(--process-phase-gap));
+      }
+
+      .process-phase-link {
+        display: block;
+      }
+    }
+
+    @media (min-width: 641px) and (max-width: 980px) {
+      .process-list {
+        --process-icon-size: 80px;
+        --process-step-gap: 32px;
+      }
+
+      .process-steps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .process-step {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .process-step-copy {
+        padding-block-start: 0;
+      }
+
+      .process-step:not(:last-child)::after {
+        inset-block-start: calc(var(--process-icon-size) / 2);
+        inset-block-end: auto;
+        inset-inline-start: calc(var(--process-icon-size) + 8px);
+        inset-inline-end: calc(12px - var(--process-step-gap));
+        border-inline-start: 0;
+        border-block-start: 1.5px solid var(--blueprint);
+      }
+
+      .process-step:not(:last-child)::before {
+        inset-block-start: calc(var(--process-icon-size) / 2 - 3px);
+        inset-block-end: auto;
+        inset-inline-start: auto;
+        inset-inline-end: calc(12px - var(--process-step-gap));
+        transform: rotate(-45deg);
+      }
+    }
+
     @media (max-width: 980px) {
       .hero-grid {
         grid-template-columns: 1fr;
@@ -913,9 +1079,6 @@
         border-left: 0;
       }
 
-      .process-list {
-        grid-template-columns: 1fr 1fr;
-      }
     }
 
     @media (max-width: 900px) {
@@ -1111,16 +1274,6 @@
       .contact-meta a,
       .contact-meta strong {
         overflow-wrap: anywhere;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .process-list {
-        grid-template-columns: 1fr;
-      }
-
-      .process-step {
-        min-height: 210px;
       }
     }
 
@@ -1326,7 +1479,7 @@
           <span data-i18n="trust.opensource">Enterprise open source</span>
         </div>
         <div class="trust-item">
-          <strong data-i18n="trust.location">Kuala Lumpur</strong>
+          <strong data-i18n="trust.location">Perak</strong>
           <span data-i18n="trust.remote">Working with clients remotely</span>
         </div>
       </div>
@@ -1401,51 +1554,193 @@
           </div>
         </header>
         <div class="process-list">
-          <article class="process-step reveal">
-            <span class="step-number">01</span>
-            <h3 data-i18n="process.step1.title">Understand the need</h3>
-            <p data-i18n="process.step1.body">We discuss your business, the problem to solve, target users, priorities, and expected outcome.</p>
-          </article>
-          <article class="process-step reveal">
-            <span class="step-number">02</span>
-            <h3 data-i18n="process.step2.title">Confirm the scope</h3>
-            <p data-i18n="process.step2.body">I organize the requirements with you and confirm what the first release will include and exclude.</p>
-          </article>
-          <article class="process-step reveal">
-            <span class="step-number">03</span>
-            <h3 data-i18n="process.step3.title">Document and quote</h3>
-            <p data-i18n="process.step3.body">You receive a software requirements confirmation document, proposed delivery plan, and quotation.</p>
-          </article>
-          <article class="process-step reveal">
-            <span class="step-number">04</span>
-            <h3 data-i18n="process.step4.title">Confirm the project</h3>
-            <p data-i18n="process.step4.body">Once the scope, quotation, timeline, and working terms are accepted, we officially begin.</p>
-          </article>
-          <article class="process-step reveal">
-            <span class="step-number">05</span>
-            <h3 data-i18n="process.step5.title">Design the solution</h3>
-            <p data-i18n="process.step5.body">I plan the user experience, interface, technical architecture, data, and key system flows.</p>
-          </article>
-          <article class="process-step reveal">
-            <span class="step-number">06</span>
-            <h3 data-i18n="process.step6.title">Build the business logic</h3>
-            <p data-i18n="process.step6.body">The product is developed around the confirmed workflows, rules, integrations, and real use cases.</p>
-          </article>
-          <article class="process-step reveal">
-            <span class="step-number">07</span>
-            <h3 data-i18n="process.step7.title">Deploy for testing</h3>
-            <p data-i18n="process.step7.body">A testing environment is deployed so you can review the complete product and verify each requirement.</p>
-          </article>
-          <article class="process-step reveal">
-            <span class="step-number">08</span>
-            <h3 data-i18n="process.step8.title">Prepare production</h3>
-            <p data-i18n="process.step8.body">After testing is accepted, we arrange the production server and domain under your ownership.</p>
-          </article>
-          <article class="process-step reveal">
-            <span class="step-number">09</span>
-            <h3 data-i18n="process.step9.title">Launch</h3>
-            <p data-i18n="process.step9.body">I deploy the production system, connect the domain, run final checks, and bring your product online.</p>
-          </article>
+          <section class="process-phase" aria-labelledby="process-define">
+            <header class="process-phase-heading">
+              <h3 class="process-phase-title" id="process-define" data-i18n="process.phase1.title">Define &amp; quote</h3>
+              <svg class="process-phase-link" viewBox="0 0 24 16" aria-hidden="true" focusable="false">
+                <path d="M1 8h22m-6-6 6 6-6 6"/>
+              </svg>
+            </header>
+            <ol class="process-steps" start="1" role="list">
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <path class="process-illustration-paper" d="M9 12h49v31H28L16 53V43H9Z"/>
+                  <path class="process-illustration-accent" d="M36 38h35v24h-7v9L53 62H36Z"/>
+                  <circle class="process-illustration-dot" cx="21" cy="27" r="2"/>
+                  <circle class="process-illustration-dot" cx="32" cy="27" r="2"/>
+                  <circle class="process-illustration-dot" cx="43" cy="27" r="2"/>
+                  <path d="M44 47h19m-19 7h12"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">01</span>
+                    <h4 class="process-step-title" data-i18n="process.step1.title">Share your idea</h4>
+                  </div>
+                  <p data-i18n="process.step1.body">Define your goals, users, and business problem.</p>
+                </div>
+              </li>
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <rect class="process-illustration-paper" x="18" y="10" width="45" height="61" rx="3"/>
+                  <rect class="process-illustration-accent" x="29" y="6" width="23" height="9" rx="2"/>
+                  <path d="m26 28 3 3 5-6m-8 18 3 3 5-6m-8 16h8M41 28h13M41 43h13M41 58h13"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">02</span>
+                    <h4 class="process-step-title" data-i18n="process.step2.title">Set the scope</h4>
+                  </div>
+                  <p data-i18n="process.step2.body">Agree what the first release includes and excludes.</p>
+                </div>
+              </li>
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <rect class="process-illustration-paper" x="11" y="19" width="42" height="53" rx="3"/>
+                  <rect class="process-illustration-paper" x="25" y="8" width="43" height="54" rx="3"/>
+                  <path d="M34 20h23M34 28h23M34 36h14"/>
+                  <rect class="process-illustration-accent" x="33" y="44" width="27" height="10" rx="1"/>
+                  <path d="M39 49h15M18 63h7"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">03</span>
+                    <h4 class="process-step-title" data-i18n="process.step3.title">Review the proposal</h4>
+                  </div>
+                  <p data-i18n="process.step3.body">Review the requirements document, delivery plan, and quote.</p>
+                </div>
+              </li>
+            </ol>
+          </section>
+          <section class="process-phase" aria-labelledby="process-build">
+            <header class="process-phase-heading">
+              <h3 class="process-phase-title" id="process-build" data-i18n="process.phase2.title">Confirm &amp; build</h3>
+              <svg class="process-phase-link" viewBox="0 0 24 16" aria-hidden="true" focusable="false">
+                <path d="M1 8h22m-6-6 6 6-6 6"/>
+              </svg>
+            </header>
+            <ol class="process-steps" start="4" role="list">
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <rect class="process-illustration-paper" x="15" y="8" width="46" height="60" rx="3"/>
+                  <path d="M25 20h26M25 28h26M25 36h16m-16 17c9-18 0 9 10-1 5-5 3 5 9 0"/>
+                  <circle class="process-illustration-accent" cx="60" cy="59" r="12"/>
+                  <path d="m54 59 4 4 8-9"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">04</span>
+                    <h4 class="process-step-title" data-i18n="process.step4.title">Confirm the project</h4>
+                  </div>
+                  <p data-i18n="process.step4.body">Approve the scope, price, timeline, and terms.</p>
+                </div>
+              </li>
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <rect class="process-illustration-paper" x="6" y="12" width="68" height="54" rx="4"/>
+                  <path d="M6 24h68"/>
+                  <circle class="process-illustration-dot" cx="13" cy="18" r="1.5"/>
+                  <circle class="process-illustration-dot" cx="19" cy="18" r="1.5"/>
+                  <circle class="process-illustration-dot" cx="25" cy="18" r="1.5"/>
+                  <path d="M15 33h18v23H15Zm0 0 18 23m0-23L15 56M42 49h23M42 56h15"/>
+                  <rect class="process-illustration-accent" x="42" y="33" width="23" height="9" rx="1"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">05</span>
+                    <h4 class="process-step-title" data-i18n="process.step5.title">Design the solution</h4>
+                  </div>
+                  <p data-i18n="process.step5.body">Plan the experience, architecture, data, and workflows.</p>
+                </div>
+              </li>
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <rect class="process-illustration-paper" x="6" y="12" width="68" height="54" rx="4"/>
+                  <path d="M6 24h68"/>
+                  <circle class="process-illustration-dot" cx="13" cy="18" r="1.5"/>
+                  <circle class="process-illustration-dot" cx="19" cy="18" r="1.5"/>
+                  <circle class="process-illustration-dot" cx="25" cy="18" r="1.5"/>
+                  <path d="M31 45h11m0-7v15m0-15h9m-9 15h9"/>
+                  <rect class="process-illustration-accent" x="14" y="36" width="17" height="18" rx="2"/>
+                  <rect x="51" y="32" width="15" height="12" rx="2"/>
+                  <rect x="51" y="49" width="15" height="12" rx="2"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">06</span>
+                    <h4 class="process-step-title" data-i18n="process.step6.title">Build the product</h4>
+                  </div>
+                  <p data-i18n="process.step6.body">Build your workflows, business rules, and integrations.</p>
+                </div>
+              </li>
+            </ol>
+          </section>
+          <section class="process-phase" aria-labelledby="process-launch">
+            <header class="process-phase-heading">
+              <h3 class="process-phase-title" id="process-launch" data-i18n="process.phase3.title">Test &amp; launch</h3>
+            </header>
+            <ol class="process-steps" start="7" role="list">
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <rect class="process-illustration-paper" x="6" y="12" width="68" height="54" rx="4"/>
+                  <path d="M6 24h68"/>
+                  <circle class="process-illustration-dot" cx="13" cy="18" r="1.5"/>
+                  <circle class="process-illustration-dot" cx="19" cy="18" r="1.5"/>
+                  <circle class="process-illustration-dot" cx="25" cy="18" r="1.5"/>
+                  <rect x="14" y="33" width="19" height="24" rx="1"/>
+                  <path d="M19 39h9M19 45h9M19 51h5"/>
+                  <rect class="process-illustration-accent" x="40" y="31" width="26" height="10" rx="1"/>
+                  <path d="m44 35 2 2 4-4m-6 13 2 2 4-4m-6 13 2 2 4-4M55 36h6M55 47h6M55 58h6"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">07</span>
+                    <h4 class="process-step-title" data-i18n="process.step7.title">Test together</h4>
+                  </div>
+                  <p data-i18n="process.step7.body">Review the test deployment against agreed requirements.</p>
+                </div>
+              </li>
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <rect class="process-illustration-paper" x="9" y="7" width="62" height="19" rx="9.5"/>
+                  <circle cx="21" cy="16.5" r="5"/>
+                  <path d="M16 16.5h10m-5-5v10M33 16.5h27M40 26v12m-5-5 5 5 5-5"/>
+                  <rect class="process-illustration-paper" x="15" y="43" width="50" height="12" rx="2"/>
+                  <rect class="process-illustration-paper" x="15" y="61" width="50" height="12" rx="2"/>
+                  <circle class="process-illustration-accent" cx="24" cy="49" r="2"/>
+                  <circle class="process-illustration-accent" cx="24" cy="67" r="2"/>
+                  <path d="M34 49h22M34 67h22"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">08</span>
+                    <h4 class="process-step-title" data-i18n="process.step8.title">Prepare production</h4>
+                  </div>
+                  <p data-i18n="process.step8.body">After approval, set up your own server and domain.</p>
+                </div>
+              </li>
+              <li class="process-step">
+                <svg class="process-illustration" viewBox="0 0 80 80" aria-hidden="true" focusable="false">
+                  <rect class="process-illustration-paper" x="6" y="12" width="68" height="54" rx="4"/>
+                  <path class="process-illustration-accent" d="M10 12h60a4 4 0 0 1 4 4v8H6v-8a4 4 0 0 1 4-4Z"/>
+                  <circle class="process-illustration-dot" cx="13" cy="18" r="1.5"/>
+                  <circle class="process-illustration-dot" cx="19" cy="18" r="1.5"/>
+                  <circle class="process-illustration-dot" cx="25" cy="18" r="1.5"/>
+                  <path d="M35 18h25"/>
+                  <rect x="14" y="33" width="20" height="23" rx="1"/>
+                  <path d="M42 35h23M42 43h23M42 51h12"/>
+                  <circle class="process-illustration-accent" cx="64" cy="64" r="10"/>
+                  <path d="m59 64 3 3 6-7"/>
+                </svg>
+                <div class="process-step-copy">
+                  <div class="process-step-heading">
+                    <span class="step-number" aria-hidden="true">09</span>
+                    <h4 class="process-step-title" data-i18n="process.step9.title">Go live</h4>
+                  </div>
+                  <p data-i18n="process.step9.body">Deploy, connect your domain, and run final checks.</p>
+                </div>
+              </li>
+            </ol>
+          </section>
         </div>
       </div>
     </section>
@@ -1478,7 +1773,7 @@
             </div>
             <div>
               <span data-i18n="contact.location">Location</span>
-              <strong data-i18n="contact.locationValue">Kuala Lumpur, Malaysia</strong>
+              <strong data-i18n="contact.locationValue">Perak, Malaysia</strong>
             </div>
             <div>
               <span>WhatsApp</span>
@@ -1512,7 +1807,7 @@
       </div>
       <footer class="site-footer shell">
         <span>© 2026 Jian Hui Leong</span>
-        <span data-i18n="footer.note">Software engineered in Kuala Lumpur</span>
+        <span data-i18n="footer.note">Software engineered in Perak</span>
       </footer>
     </section>
   </main>
@@ -1553,7 +1848,7 @@
         "trust.engineering": "Full-stack engineering",
         "trust.azure": "Azure CLI contributor",
         "trust.opensource": "Enterprise open source",
-        "trust.location": "Kuala Lumpur",
+        "trust.location": "Perak",
         "trust.remote": "Working with clients remotely",
         "services.kicker": "What I can do for your business",
         "services.title": "Use technology to remove friction and create new possibilities.",
@@ -1585,24 +1880,27 @@
         "process.kicker": "How we work together",
         "process.title": "A clear process from our first conversation to going live.",
         "process.intro": "Each stage produces a clear decision or deliverable, so scope, cost, progress, and launch responsibilities stay visible throughout the project.",
-        "process.step1.title": "Understand the need",
-        "process.step1.body": "We discuss your business, the problem to solve, target users, priorities, and expected outcome.",
-        "process.step2.title": "Confirm the scope",
-        "process.step2.body": "I organize the requirements with you and confirm what the first release will include and exclude.",
-        "process.step3.title": "Document and quote",
-        "process.step3.body": "You receive a software requirements confirmation document, proposed delivery plan, and quotation.",
+        "process.phase1.title": "Define & quote",
+        "process.phase2.title": "Confirm & build",
+        "process.phase3.title": "Test & launch",
+        "process.step1.title": "Share your idea",
+        "process.step1.body": "Define your goals, users, and business problem.",
+        "process.step2.title": "Set the scope",
+        "process.step2.body": "Agree what the first release includes and excludes.",
+        "process.step3.title": "Review the proposal",
+        "process.step3.body": "Review the requirements document, delivery plan, and quote.",
         "process.step4.title": "Confirm the project",
-        "process.step4.body": "Once the scope, quotation, timeline, and working terms are accepted, we officially begin.",
+        "process.step4.body": "Approve the scope, price, timeline, and terms.",
         "process.step5.title": "Design the solution",
-        "process.step5.body": "I plan the user experience, interface, technical architecture, data, and key system flows.",
-        "process.step6.title": "Build the business logic",
-        "process.step6.body": "The product is developed around the confirmed workflows, rules, integrations, and real use cases.",
-        "process.step7.title": "Deploy for testing",
-        "process.step7.body": "A testing environment is deployed so you can review the complete product and verify each requirement.",
+        "process.step5.body": "Plan the experience, architecture, data, and workflows.",
+        "process.step6.title": "Build the product",
+        "process.step6.body": "Build your workflows, business rules, and integrations.",
+        "process.step7.title": "Test together",
+        "process.step7.body": "Review the test deployment against agreed requirements.",
         "process.step8.title": "Prepare production",
-        "process.step8.body": "After testing is accepted, we arrange the production server and domain under your ownership.",
-        "process.step9.title": "Launch",
-        "process.step9.body": "I deploy the production system, connect the domain, run final checks, and bring your product online.",
+        "process.step8.body": "After approval, set up your own server and domain.",
+        "process.step9.title": "Go live",
+        "process.step9.body": "Deploy, connect your domain, and run final checks.",
         "work.kicker": "Selected work",
         "work.title": "Products across public cloud, business operations, and consumer platforms.",
         "work.intro": "Different industries, one consistent responsibility: understand the system, make the right trade-offs, and deliver something people can use.",
@@ -1615,7 +1913,7 @@
         "contact.intro": "Share your idea, a process that causes trouble, or a product you want to improve. I’ll help you identify the practical first step.",
         "contact.email": "Email",
         "contact.location": "Location",
-        "contact.locationValue": "Kuala Lumpur, Malaysia",
+        "contact.locationValue": "Perak, Malaysia",
         "form.name": "Your name",
         "form.namePlaceholder": "How should I address you?",
         "form.email": "Work email",
@@ -1628,7 +1926,7 @@
         "form.success": "Your email app should open with the project details ready.",
         "mail.name": "Name",
         "mail.email": "Email",
-        "footer.note": "Software engineered in Kuala Lumpur"
+        "footer.note": "Software engineered in Perak"
       },
       zh: {
         "meta.title": "Jian Hui Leong — 从商业构想到可用软件",
@@ -1664,7 +1962,7 @@
         "trust.engineering": "全栈软件工程",
         "trust.azure": "Azure CLI 贡献者",
         "trust.opensource": "企业级开源项目",
-        "trust.location": "吉隆坡",
+        "trust.location": "霹雳州",
         "trust.remote": "远程服务各地客户",
         "services.kicker": "我能为你的业务做什么",
         "services.title": "用技术减少阻力，创造新的可能。",
@@ -1696,24 +1994,27 @@
         "process.kicker": "我们的合作方式",
         "process.title": "从第一次沟通到正式上线，每一步都清晰明确。",
         "process.intro": "每个阶段都有明确决定或交付成果，让范围、成本、进度与上线责任在整个项目中保持透明。",
-        "process.step1.title": "了解需求",
-        "process.step1.body": "讨论你的业务、需要解决的问题、目标用户、优先事项与预期成果。",
-        "process.step2.title": "确认范围",
-        "process.step2.body": "共同整理需求，并确认首个版本包含与不包含的内容。",
-        "process.step3.title": "文件与报价",
-        "process.step3.body": "你会收到软件需求确认文件、建议交付计划与报价。",
-        "process.step4.title": "确认项目",
-        "process.step4.body": "范围、报价、时间与合作条款获接受后，项目正式启动。",
+        "process.phase1.title": "需求与报价",
+        "process.phase2.title": "确认与开发",
+        "process.phase3.title": "验收与上线",
+        "process.step1.title": "聊聊需求",
+        "process.step1.body": "明确目标、用户和业务问题。",
+        "process.step2.title": "确定范围",
+        "process.step2.body": "确认首版包含与不包含的内容。",
+        "process.step3.title": "查看方案",
+        "process.step3.body": "核对需求文档、交付计划与报价。",
+        "process.step4.title": "确认合作",
+        "process.step4.body": "确认范围、价格、周期和合作条款。",
         "process.step5.title": "设计方案",
-        "process.step5.body": "规划用户体验、界面、技术架构、数据与关键系统流程。",
-        "process.step6.title": "构建业务逻辑",
-        "process.step6.body": "围绕已确认的工作流程、规则、整合与实际使用场景开发产品。",
-        "process.step7.title": "部署测试",
-        "process.step7.body": "部署测试环境，让你审阅完整产品并验证每项需求。",
+        "process.step5.body": "规划体验、技术架构、数据与流程。",
+        "process.step6.title": "开发产品",
+        "process.step6.body": "实现工作流、业务规则与系统集成。",
+        "process.step7.title": "测试验收",
+        "process.step7.body": "在测试环境逐项核对已确认的需求。",
         "process.step8.title": "准备生产环境",
-        "process.step8.body": "测试获接受后，安排由你拥有的生产服务器与域名。",
+        "process.step8.body": "验收后，配置归你所有的服务器与域名。",
         "process.step9.title": "正式上线",
-        "process.step9.body": "部署生产系统、连接域名、完成最终检查，并让产品正式上线。",
+        "process.step9.body": "部署系统、连接域名并完成最终检查。",
         "work.kicker": "精选项目",
         "work.title": "横跨公共云、企业营运与消费平台的产品。",
         "work.intro": "行业各不相同，责任始终一致：理解系统、作出正确取舍，并交付真正有人使用的产品。",
@@ -1726,7 +2027,7 @@
         "contact.intro": "告诉我你的构想、造成困扰的流程，或想改进的产品。我会协助你找出实际可行的第一步。",
         "contact.email": "电邮",
         "contact.location": "地点",
-        "contact.locationValue": "马来西亚吉隆坡",
+        "contact.locationValue": "马来西亚霹雳州",
         "form.name": "你的姓名",
         "form.namePlaceholder": "我该如何称呼你？",
         "form.email": "工作电邮",
@@ -1739,7 +2040,7 @@
         "form.success": "你的电邮应用应会打开，并准备好项目详情。",
         "mail.name": "姓名",
         "mail.email": "电邮",
-        "footer.note": "软件工程，打造于吉隆坡"
+        "footer.note": "软件工程，打造于霹雳州"
       },
       ms: {
         "meta.title": "Jian Hui Leong — Daripada Idea Perniagaan kepada Perisian",
@@ -1775,7 +2076,7 @@
         "trust.engineering": "Kejuruteraan full-stack",
         "trust.azure": "Penyumbang Azure CLI",
         "trust.opensource": "Sumber terbuka perusahaan",
-        "trust.location": "Kuala Lumpur",
+        "trust.location": "Perak",
         "trust.remote": "Bekerja dengan pelanggan dari jauh",
         "services.kicker": "Apa yang boleh saya lakukan",
         "services.title": "Gunakan teknologi untuk mengurangkan halangan dan membuka peluang.",
@@ -1807,24 +2108,27 @@
         "process.kicker": "Cara kita bekerjasama",
         "process.title": "Proses yang jelas daripada perbualan pertama hingga pelancaran.",
         "process.intro": "Setiap peringkat menghasilkan keputusan atau hasil kerja yang jelas supaya skop, kos, kemajuan dan tanggungjawab pelancaran sentiasa telus.",
-        "process.step1.title": "Fahami keperluan",
-        "process.step1.body": "Kita membincangkan perniagaan, masalah, pengguna sasaran, keutamaan dan hasil yang diharapkan.",
-        "process.step2.title": "Sahkan skop",
-        "process.step2.body": "Saya menyusun keperluan bersama anda dan mengesahkan perkara yang termasuk atau tidak dalam keluaran pertama.",
-        "process.step3.title": "Dokumen dan sebut harga",
-        "process.step3.body": "Anda menerima dokumen pengesahan keperluan, pelan penghantaran dan sebut harga.",
+        "process.phase1.title": "Skop & sebut harga",
+        "process.phase2.title": "Sahkan & bina",
+        "process.phase3.title": "Uji & lancar",
+        "process.step1.title": "Kongsi idea anda",
+        "process.step1.body": "Kenal pasti matlamat, pengguna dan masalah perniagaan anda.",
+        "process.step2.title": "Tetapkan skop",
+        "process.step2.body": "Persetujui perkara yang disertakan dan dikecualikan dalam keluaran pertama.",
+        "process.step3.title": "Semak cadangan",
+        "process.step3.body": "Semak dokumen keperluan, pelan penyerahan dan sebut harga.",
         "process.step4.title": "Sahkan projek",
-        "process.step4.body": "Selepas skop, harga, jadual dan terma dipersetujui, projek bermula secara rasmi.",
+        "process.step4.body": "Sahkan skop, harga, jadual dan terma kerjasama.",
         "process.step5.title": "Reka penyelesaian",
-        "process.step5.body": "Saya merancang pengalaman pengguna, antara muka, seni bina teknikal, data dan aliran utama sistem.",
-        "process.step6.title": "Bina logik perniagaan",
-        "process.step6.body": "Produk dibangunkan berdasarkan aliran kerja, peraturan, integrasi dan kes penggunaan yang disahkan.",
-        "process.step7.title": "Laksana untuk ujian",
-        "process.step7.body": "Persekitaran ujian disediakan supaya anda boleh menyemak produk lengkap dan mengesahkan setiap keperluan.",
+        "process.step5.body": "Rancang pengalaman pengguna, seni bina, data dan aliran kerja.",
+        "process.step6.title": "Bina produk",
+        "process.step6.body": "Bina aliran kerja, peraturan perniagaan dan integrasi anda.",
+        "process.step7.title": "Uji bersama",
+        "process.step7.body": "Semak produk dalam persekitaran ujian berdasarkan keperluan yang dipersetujui.",
         "process.step8.title": "Sediakan produksi",
-        "process.step8.body": "Selepas ujian diterima, kita menyediakan pelayan produksi dan domain di bawah pemilikan anda.",
-        "process.step9.title": "Lancarkan",
-        "process.step9.body": "Saya melaksanakan sistem produksi, menyambungkan domain, membuat semakan akhir dan melancarkan produk anda.",
+        "process.step8.body": "Selepas diluluskan, sediakan pelayan dan domain milik anda.",
+        "process.step9.title": "Lancarkan produk",
+        "process.step9.body": "Laksanakan sistem, sambungkan domain dan jalankan semakan akhir.",
         "work.kicker": "Projek pilihan",
         "work.title": "Produk merentasi awan awam, operasi perniagaan dan platform pengguna.",
         "work.intro": "Industri berbeza, tanggungjawab tetap sama: fahami sistem, buat pertimbangan tepat dan hasilkan sesuatu yang boleh digunakan.",
@@ -1837,7 +2141,7 @@
         "contact.intro": "Kongsikan idea, proses yang bermasalah atau produk yang ingin ditambah baik. Saya akan membantu mengenal pasti langkah pertama yang praktikal.",
         "contact.email": "E-mel",
         "contact.location": "Lokasi",
-        "contact.locationValue": "Kuala Lumpur, Malaysia",
+        "contact.locationValue": "Perak, Malaysia",
         "form.name": "Nama anda",
         "form.namePlaceholder": "Bagaimana saya patut memanggil anda?",
         "form.email": "E-mel kerja",
@@ -1850,7 +2154,7 @@
         "form.success": "Aplikasi e-mel anda sepatutnya dibuka dengan butiran projek tersedia.",
         "mail.name": "Nama",
         "mail.email": "E-mel",
-        "footer.note": "Perisian dibangunkan di Kuala Lumpur"
+        "footer.note": "Perisian dibangunkan di Perak"
       }
     };
 
